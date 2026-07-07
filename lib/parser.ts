@@ -1,7 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import fs from "fs";
-import path from "path";
 import { AssemblyGuide } from "./schema";
 
 const MODEL = process.env.PARSER_MODEL ?? "claude-opus-4-8";
@@ -31,10 +29,10 @@ const SYSTEM_PROMPT = `你是「IKEA 組裝說明書視覺化系統」的解析�
 
 export interface ParseInput {
   fileType: "pdf" | "image";
-  /** PDF 原始檔路徑(fileType=pdf 時) */
-  pdfPath?: string;
-  /** 頁面圖片資料夾(fileType=image 時送圖) */
-  pagesDir: string;
+  /** PDF 原始檔 bytes(fileType=pdf 時,直接以 document block 送整份保留頁碼) */
+  pdfBytes?: Buffer;
+  /** 頁面圖片 bytes,依頁碼排序(fileType=image 時逐頁以 image block 送出) */
+  pageImages: Buffer[];
   pageCount: number;
 }
 
@@ -42,6 +40,8 @@ export interface ParseInput {
  * 呼叫 Claude 將說明書解析為 AssemblyGuide。
  * - PDF:直接以 document block 送整份 PDF(保留頁碼資訊)。
  * - 圖片:以 image block 逐頁送出。
+ * 全程在記憶體中處理 bytes,不落地到檔案系統 —— Vercel serverless function
+ * 只有 /tmp 可寫且不保證跨呼叫延續,pipeline 就不依賴中繼檔案。
  * 以 structured outputs(JSON Schema)保證輸出可解析,再用 zod 驗證。
  */
 export async function parseManual(input: ParseInput): Promise<AssemblyGuide> {
@@ -49,21 +49,15 @@ export async function parseManual(input: ParseInput): Promise<AssemblyGuide> {
 
   const content: Anthropic.ContentBlockParam[] = [];
   if (input.fileType === "pdf") {
-    const data = fs.readFileSync(input.pdfPath!).toString("base64");
     content.push({
       type: "document",
-      source: { type: "base64", media_type: "application/pdf", data },
+      source: { type: "base64", media_type: "application/pdf", data: input.pdfBytes!.toString("base64") },
     });
   } else {
-    for (let p = 1; p <= input.pageCount; p++) {
-      const img = path.join(input.pagesDir, `page-${String(p).padStart(2, "0")}.jpg`);
+    for (const img of input.pageImages) {
       content.push({
         type: "image",
-        source: {
-          type: "base64",
-          media_type: "image/jpeg",
-          data: fs.readFileSync(img).toString("base64"),
-        },
+        source: { type: "base64", media_type: "image/jpeg", data: img.toString("base64") },
       });
     }
   }

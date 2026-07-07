@@ -11,12 +11,12 @@ export async function GET(
   const { id } = await params;
   let job;
   try {
-    job = readJob(id);
+    job = await readJob(id);
   } catch {
     return NextResponse.json({ error: "invalid id" }, { status: 400 });
   }
   if (!job) return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  const guide = job.status === "ready" ? readGuide(id) : null;
+  const guide = job.status === "ready" ? await readGuide(id) : null;
   return NextResponse.json({ job, guide });
 }

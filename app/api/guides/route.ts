@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import fs from "fs";
-import path from "path";
-import { createJob, jobDir, readJob, writeJob } from "@/lib/store";
-import { copyImageAsPage, rasterizePdf } from "@/lib/rasterize";
+import { waitUntil } from "@vercel/functions";
+import { createJob, readJob, savePageImage, writeGuide, writeJob } from "@/lib/store";
+import { imageAsSinglePage, rasterizePdf } from "@/lib/rasterize";
 import { parseManual } from "@/lib/parser";
-import { writeGuide } from "@/lib/store";
 import type { GuideJob } from "@/lib/schema";
 
 export const runtime = "nodejs";
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 const ACCEPTED: Record<string, "pdf" | "image"> = {
   "application/pdf": "pdf",
@@ -44,46 +42,58 @@ export async function POST(req: NextRequest) {
     fileType,
     pageCount: 0,
   };
-  createJob(job);
+  await createJob(job);
 
-  const ext = fileType === "pdf" ? "pdf" : file.type === "image/png" ? "png" : "jpg";
-  const sourcePath = path.join(jobDir(id), `source.${ext}`);
-  fs.writeFileSync(sourcePath, Buffer.from(await file.arrayBuffer()));
+  const bytes = Buffer.from(await file.arrayBuffer());
 
-  // 非同步執行:轉頁面圖 → Claude 解析 → 寫入 guide.json
-  void runPipeline(id, sourcePath, fileType).catch((err) => {
-    const j = readJob(id);
-    if (j) {
-      j.status = "error";
-      j.error = err instanceof Error ? err.message : String(err);
-      writeJob(j);
-    }
-  });
+  // 背景執行:轉頁面圖 → Claude 解析 → 寫入 guide.json。
+  // 用 waitUntil 讓這段工作在回傳 202 之後仍能繼續執行 —— 一般的
+  // 「fire-and-forget」promise 在 Vercel serverless function 上,回應送出後
+  // function 執行環境隨時可能被凍結/回收,背景工作不保證跑得完;waitUntil
+  // 明確告知平台「回應送出後請保持這個 promise 執行到結束」。本機開發環境下
+  // 這個呼叫等同直接執行 promise,行為不受影響。
+  waitUntil(
+    runPipeline(id, bytes, fileType).catch(async (err) => {
+      const j = await readJob(id);
+      if (j) {
+        j.status = "error";
+        j.error = err instanceof Error ? err.message : String(err);
+        await writeJob(j);
+      }
+    })
+  );
 
   return NextResponse.json({ id }, { status: 202 });
 }
 
-async function runPipeline(id: string, sourcePath: string, fileType: "pdf" | "image") {
-  const job = readJob(id)!;
-  const pagesDir = path.join(jobDir(id), "pages");
+async function runPipeline(id: string, sourceBytes: Buffer, fileType: "pdf" | "image") {
+  const job = (await readJob(id))!;
 
   job.status = "rendering";
-  writeJob(job);
-  job.pageCount =
-    fileType === "pdf"
-      ? await rasterizePdf(sourcePath, pagesDir)
-      : copyImageAsPage(sourcePath, pagesDir);
+  await writeJob(job);
+
+  const pages =
+    fileType === "pdf" ? await rasterizePdf(sourceBytes) : imageAsSinglePage(sourceBytes);
+  job.pageCount = pages.length;
+
+  const pageUrls: string[] = [];
+  for (let i = 0; i < pages.length; i++) {
+    const url = await savePageImage(id, i + 1, pages[i]);
+    if (url) pageUrls.push(url);
+  }
+  if (pageUrls.length) job.pageUrls = pageUrls;
+  await writeJob(job);
 
   job.status = "parsing";
-  writeJob(job);
+  await writeJob(job);
   const guide = await parseManual({
     fileType,
-    pdfPath: fileType === "pdf" ? sourcePath : undefined,
-    pagesDir,
+    pdfBytes: fileType === "pdf" ? sourceBytes : undefined,
+    pageImages: fileType === "image" ? pages : [],
     pageCount: job.pageCount,
   });
 
-  writeGuide(id, guide);
+  await writeGuide(id, guide);
   job.status = "ready";
-  writeJob(job);
+  await writeJob(job);
 }

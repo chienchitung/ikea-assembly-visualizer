@@ -210,4 +210,6 @@ export interface GuideJob {
   fileType: "pdf" | "image";
   pageCount: number;
   error?: string;
+  /** Blob 儲存模式下,已上傳頁面圖片的公開網址(依頁碼排序,1-based)。 */
+  pageUrls?: string[];
 }
