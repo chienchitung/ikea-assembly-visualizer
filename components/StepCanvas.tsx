@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Annotation, VisualSpec } from "@/lib/schema";
 
+// IKEA 色卡用色(與品牌延伸色一致):藍=零件、橘=五金、綠=目標位置、紅=警示、粉=旋轉
 const TONE_COLOR: Record<string, string> = {
   part: "#0058a3",
-  hardware: "#e77c00",
-  target: "#0a8a3a",
-  warning: "#d32f2f",
+  hardware: "#f26a1b",
+  target: "#008c46",
+  warning: "#cc0008",
   move: "#0058a3",
-  rotate: "#7b3fd4",
+  rotate: "#e75294",
 };
 
 interface Props {
@@ -232,7 +233,7 @@ function AnnotationEl({
             strokeWidth={0.4 * u}
             strokeDasharray={`${1.2 * u} ${0.9 * u}`}
           />
-          <LabelPill x={x} y={y + h + 3 * u} text={`🔍 ${ann.note}`} color="#55565a" u={u} />
+          <LabelPill x={x} y={y + h + 3 * u} text={ann.note} color="#484848" u={u} />
         </g>
       );
     }

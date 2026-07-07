@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { GuideJobStatus } from "@/lib/schema";
+import { IconUpload } from "./icons";
 
 const STAGES: { key: GuideJobStatus; label: string }[] = [
-  { key: "uploaded", label: "1. 上傳檔案" },
-  { key: "rendering", label: "2. 轉換頁面" },
-  { key: "parsing", label: "3. AI 解析說明書" },
-  { key: "ready", label: "4. 生成指南" },
+  { key: "uploaded", label: "上傳檔案" },
+  { key: "rendering", label: "轉換頁面" },
+  { key: "parsing", label: "AI 解析說明書" },
+  { key: "ready", label: "生成指南" },
 ];
 
 export default function Uploader() {
@@ -58,10 +59,8 @@ export default function Uploader() {
     const activeIdx = STAGES.findIndex((s) => s.key === status);
     return (
       <div className="pipeline-status">
-        <h3 style={{ margin: "0 0 4px" }}>正在生成你的組裝指南…</h3>
-        <p style={{ color: "var(--ink-soft)", fontSize: 14, margin: 0 }}>
-          AI 正在閱讀說明書的每一頁,辨識零件、箭頭與步驟,通常需要 1–3 分鐘。
-        </p>
+        <h3>正在生成你的組裝指南…</h3>
+        <p>AI 正在閱讀每一頁,辨識零件、箭頭與步驟,通常需要 1–3 分鐘。</p>
         <div className="pipeline-steps">
           {STAGES.map((s, i) => (
             <span
@@ -71,8 +70,7 @@ export default function Uploader() {
                 (i < activeIdx ? "done" : i === activeIdx ? "active" : "")
               }
             >
-              {i < activeIdx ? "✓ " : ""}
-              {s.label}
+              {i + 1}. {s.label}
             </span>
           ))}
         </div>
@@ -96,10 +94,12 @@ export default function Uploader() {
         if (file) void upload(file);
       }}
     >
-      <div className="big-icon">📄</div>
+      <span className="up-icon">
+        <IconUpload size={26} />
+      </span>
       <h3>拖放或點擊上傳 IKEA 組裝說明書</h3>
-      <p>支援 PDF、JPG、PNG,最大 40MB(需設定 ANTHROPIC_API_KEY)</p>
-      {error && <div className="upload-error">⚠ {error}</div>}
+      <p>支援 PDF、JPG、PNG,最大 40MB</p>
+      {error && <div className="upload-error">{error}</div>}
       <input
         ref={inputRef}
         type="file"

@@ -1,17 +1,25 @@
+/*
+ * 設計語彙對齊 IKEA.com(Skapa 設計系統):
+ * - 品牌色:藍 #0058A3、黃 #FFDB00(僅作品牌/強調,不當底色鋪滿)
+ * - 介面以白底為主,文字 #111,次要 #484848,髮絲線 #DFDFDF,區塊底 #F5F5F5
+ * - 語意色:成功 #0A8A00、錯誤 #CC0008、警示 #F26A1B
+ * - 按鈕一律全圓角膠囊(pill);卡片方角(4px)、極少陰影、以框線分隔
+ * - 字體:Noto(IKEA 品牌字體 Noto IKEA 的基底);中文為 Noto Sans TC
+ */
+
 :root {
   --blue: #0058a3;
-  --blue-dark: #004380;
+  --blue-dark: #004f93;
   --yellow: #ffdb00;
-  --ink: #1a1a1a;
-  --ink-soft: #55565a;
-  --line: #e3e3e6;
-  --bg: #f5f6f8;
-  --card: #ffffff;
-  --green: #0a8a3a;
-  --orange: #e77c00;
-  --red: #d32f2f;
-  --radius: 14px;
-  --shadow: 0 1px 3px rgba(20, 30, 50, 0.07), 0 8px 24px rgba(20, 30, 50, 0.07);
+  --text: #111111;
+  --text-2: #484848;
+  --text-3: #767676;
+  --line: #dfdfdf;
+  --bg-subtle: #f5f5f5;
+  --positive: #0a8a00;
+  --negative: #cc0008;
+  --caution: #f26a1b;
+  --pink: #e75294;
 }
 
 * {
@@ -22,16 +30,20 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui,
-    -apple-system, sans-serif;
-  line-height: 1.6;
+  background: #fff;
+  color: var(--text);
+  font-family: "Noto IKEA", "Noto Sans TC", "Noto Sans", "PingFang TC",
+    "Microsoft JhengHei", system-ui, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
   color: var(--blue);
   text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
 }
 
 button {
@@ -41,15 +53,14 @@ button {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
-/* ---------- 頂部導覽 ---------- */
+/* ---------- 頂部導覽(白底 + 官方 logo) ---------- */
 .topbar {
   background: #fff;
-  color: var(--ink);
-  padding: 10px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 12px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   position: relative;
   z-index: 10;
 }
@@ -59,158 +70,36 @@ button {
   gap: 16px;
 }
 .logo-img {
-  height: 38px;
+  height: 36px;
   width: auto;
   display: block;
 }
 .topbar-title {
   font-weight: 700;
   font-size: 16px;
-  color: var(--ink);
+  color: var(--text);
 }
 .topbar a.home-link {
   color: var(--blue);
   margin-left: auto;
   font-size: 14px;
-}
-.topbar a.home-link:hover {
-  color: var(--blue-dark);
-  text-decoration: underline;
+  font-weight: 500;
 }
 
-/* ---------- 首頁 ---------- */
-.hero {
-  padding: 56px 0 28px;
-  text-align: center;
-}
-.hero h1 {
-  font-size: 34px;
-  margin: 0 0 12px;
-  letter-spacing: 0.5px;
-}
-.hero p {
-  color: var(--ink-soft);
-  max-width: 640px;
-  margin: 0 auto;
-  font-size: 16px;
-}
-
-.upload-zone {
-  margin: 32px auto;
-  max-width: 640px;
-  background: var(--card);
-  border: 2px dashed #b9c6d4;
-  border-radius: var(--radius);
-  padding: 48px 32px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-.upload-zone:hover,
-.upload-zone.dragging {
-  border-color: var(--blue);
-  background: #f2f8ff;
-}
-.upload-zone .big-icon {
-  font-size: 44px;
-}
-.upload-zone h3 {
-  margin: 12px 0 4px;
-  font-size: 18px;
-}
-.upload-zone p {
-  color: var(--ink-soft);
-  font-size: 14px;
-  margin: 0;
-}
-.upload-error {
-  color: var(--red);
-  font-size: 14px;
-  margin-top: 12px;
-}
-
-.pipeline-status {
-  max-width: 640px;
-  margin: 32px auto;
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 32px;
-  text-align: center;
-}
-.pipeline-steps {
-  display: flex;
+/* ---------- 按鈕(IKEA 膠囊型) ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-.pipeline-chip {
-  padding: 6px 14px;
-  border-radius: 99px;
-  font-size: 13px;
-  background: var(--bg);
-  color: var(--ink-soft);
-  border: 1px solid var(--line);
-}
-.pipeline-chip.active {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
-  animation: pulse-soft 1.4s ease-in-out infinite;
-}
-.pipeline-chip.done {
-  background: #e8f5ec;
-  border-color: #bfe3cb;
-  color: var(--green);
-}
-@keyframes pulse-soft {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.65;
-  }
-}
-
-.demo-card {
-  max-width: 640px;
-  margin: 0 auto 64px;
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 22px 26px;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-.demo-card .thumb {
-  width: 84px;
-  height: 84px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  object-fit: cover;
-  background: #fff;
-}
-.demo-card h3 {
-  margin: 0 0 4px;
-  font-size: 16px;
-}
-.demo-card p {
-  margin: 0;
-  color: var(--ink-soft);
-  font-size: 13.5px;
-}
-.btn {
-  display: inline-block;
   border: none;
-  border-radius: 99px;
-  padding: 10px 22px;
+  border-radius: 64px;
+  padding: 12px 26px;
   font-size: 14.5px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.12s, border-color 0.12s;
+  line-height: 1.2;
 }
 .btn-primary {
   background: var(--blue);
@@ -218,248 +107,418 @@ button {
 }
 .btn-primary:hover {
   background: var(--blue-dark);
+  text-decoration: none;
 }
-.btn-ghost {
-  background: transparent;
-  color: var(--blue);
-  border: 1.5px solid var(--blue);
+.btn-secondary {
+  background: #fff;
+  color: var(--text) !important;
+  border: 1px solid var(--text-3);
 }
-.btn-ghost:hover {
-  background: #eef5fb;
+.btn-secondary:hover {
+  border-color: var(--text);
+  text-decoration: none;
 }
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  max-width: 980px;
-  margin: 0 auto 72px;
+/* 圓形 icon 按鈕(IKEA.com 樣式) */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
 }
-.feature {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
+.icon-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--text-3);
 }
-.feature .f-icon {
-  font-size: 26px;
+.icon-btn.on {
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
 }
-.feature h4 {
-  margin: 10px 0 6px;
-  font-size: 15px;
+
+/* ---------- 首頁 ---------- */
+.hero {
+  padding: 64px 0 8px;
+  max-width: 760px;
 }
-.feature p {
+.hero h1 {
+  font-size: 36px;
+  line-height: 1.25;
+  margin: 0 0 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.hero p {
+  color: var(--text-2);
+  font-size: 16px;
   margin: 0;
+}
+
+.upload-zone {
+  margin: 36px 0;
+  max-width: 760px;
+  background: #fff;
+  border: 2px dashed var(--line);
+  border-radius: 4px;
+  padding: 44px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:hover,
+.upload-zone.dragging {
+  border-color: var(--blue);
+  background: #f2f7fc;
+}
+.upload-zone .up-icon {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  color: var(--text);
+  align-items: center;
+  justify-content: center;
+}
+.upload-zone h3 {
+  margin: 14px 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+}
+.upload-zone p {
+  color: var(--text-3);
+  font-size: 13.5px;
+  margin: 0;
+}
+.upload-error {
+  color: var(--negative);
+  font-size: 14px;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.pipeline-status {
+  max-width: 760px;
+  margin: 36px 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 32px;
+}
+.pipeline-status h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+.pipeline-status > p {
+  color: var(--text-2);
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+.pipeline-steps {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pipeline-chip {
+  padding: 7px 16px;
+  border-radius: 64px;
   font-size: 13px;
-  color: var(--ink-soft);
+  font-weight: 500;
+  background: var(--bg-subtle);
+  color: var(--text-3);
+}
+.pipeline-chip.active {
+  background: var(--blue);
+  color: #fff;
+  animation: pulse-soft 1.4s ease-in-out infinite;
+}
+.pipeline-chip.done {
+  background: #eaf4e9;
+  color: var(--positive);
+}
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* 示範卡片(IKEA 商品卡風格:圖 + 名稱 + 膠囊按鈕) */
+.demo-card {
+  max-width: 760px;
+  margin: 0 0 56px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.demo-card .thumb {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  background: var(--bg-subtle);
+  flex: none;
+}
+.demo-card h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.demo-card p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+}
+
+/* 組裝前須知:直接使用 IKEA 說明書小人物插圖 */
+.picto-section {
+  border-top: 1px solid var(--line);
+  padding: 44px 0 72px;
+}
+.picto-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.picto-section .sub {
+  color: var(--text-3);
+  font-size: 13.5px;
+  margin: 0 0 24px;
+}
+.picto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+.picto-card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+}
+.picto-card img {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+  padding: 14px 14px 0;
+  background: #fff;
+}
+.picto-card .cap {
+  padding: 12px 16px 16px;
+}
+.picto-card .cap b {
+  display: block;
+  font-size: 14.5px;
+  margin-bottom: 2px;
+}
+.picto-card .cap span {
+  font-size: 13px;
+  color: var(--text-2);
 }
 
 /* ---------- 指南檢視器 ---------- */
+.guide-head {
+  padding: 22px 0 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.guide-head h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.guide-head .doc-code {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.guide-head .progress-side {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+}
+.guide-head .pct {
+  font-size: 13px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 64px;
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+.progress-bar > div {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 64px;
+  transition: width 0.4s ease;
+}
+
+/* 步驟號碼列(仿說明書的大數字步驟) */
+.step-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 14px;
+  scrollbar-width: thin;
+}
+.step-dot {
+  flex: none;
+  min-width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, border-color 0.12s;
+}
+.step-dot:hover {
+  border-color: var(--text);
+}
+.step-dot.current {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+.step-dot.done {
+  background: var(--bg-subtle);
+  color: var(--positive);
+  border-color: var(--line);
+}
+
+/* 主要雙欄 */
 .viewer {
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr) 340px;
-  gap: 18px;
-  padding: 20px 0 48px;
+  grid-template-columns: minmax(0, 7fr) minmax(300px, 4fr);
+  gap: 24px;
+  padding-bottom: 64px;
   align-items: start;
 }
-@media (max-width: 1080px) {
+@media (max-width: 960px) {
   .viewer {
     grid-template-columns: 1fr;
   }
 }
 
 .panel {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
   overflow: hidden;
 }
-.panel-header {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--line);
-  font-weight: 700;
-  font-size: 14.5px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-/* 進度列 */
-.progress-wrap {
-  padding: 16px 0 2px;
-}
-.progress-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 8px;
-}
-.progress-meta h2 {
-  margin: 0;
-  font-size: 20px;
-}
-.progress-meta .pct {
-  font-size: 13.5px;
-  color: var(--ink-soft);
-}
-.progress-bar {
-  height: 8px;
-  border-radius: 99px;
-  background: #e4e8ee;
-  overflow: hidden;
-}
-.progress-bar > div {
-  height: 100%;
-  background: linear-gradient(90deg, var(--blue), #2f8fd6);
-  border-radius: 99px;
-  transition: width 0.4s ease;
-}
-
-/* 步驟清單 */
-.step-list {
-  max-height: 72vh;
-  overflow-y: auto;
-}
-.step-item {
-  width: 100%;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  text-align: left;
-  padding: 12px 16px;
-  border: none;
-  border-bottom: 1px solid var(--line);
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.12s;
-}
-.step-item:hover {
-  background: #f4f8fc;
-}
-.step-item.current {
-  background: #e9f3fc;
-  box-shadow: inset 3px 0 0 var(--blue);
-}
-.step-num {
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 13px;
-  background: #eef1f5;
-  color: var(--ink-soft);
-}
-.step-item.current .step-num {
-  background: var(--blue);
-  color: #fff;
-}
-.step-item.done .step-num {
-  background: #d9efe1;
-  color: var(--green);
-}
-.step-item .s-title {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.35;
-}
-.step-item .s-sub {
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin-top: 2px;
-}
-
-/* 中央畫布 */
-.canvas-panel {
-  position: relative;
-}
+/* 畫布區 */
 .canvas-toolbar {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--line);
-  flex-wrap: wrap;
 }
-.tool-btn {
-  border: 1px solid var(--line);
-  background: #fff;
-  border-radius: 8px;
-  padding: 7px 13px;
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--ink);
-  transition: background 0.12s, border-color 0.12s;
-}
-.tool-btn:hover {
-  border-color: var(--blue);
-  color: var(--blue);
-}
-.tool-btn.on {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
+.canvas-toolbar .step-label {
+  font-weight: 700;
+  font-size: 15px;
+  margin-right: auto;
 }
 .canvas-stage {
-  background: #fbfbfc;
+  background: #fff;
   display: flex;
   justify-content: center;
-  padding: 10px;
+  padding: 8px;
 }
 .canvas-stage svg {
   max-width: 100%;
   height: auto;
-  max-height: 62vh;
-  border-radius: 8px;
+  max-height: 60vh;
 }
 .canvas-caption {
-  padding: 10px 18px 16px;
-  font-size: 13.5px;
-  color: var(--ink-soft);
+  padding: 8px 18px 4px;
+  font-size: 13px;
+  color: var(--text-3);
   text-align: center;
 }
-
-/* 步驟控制列 */
 .step-controls {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   padding: 14px 16px;
   border-top: 1px solid var(--line);
   align-items: center;
+  justify-content: space-between;
 }
-.step-controls .spacer {
-  flex: 1;
+.step-controls .mid {
+  font-size: 13px;
+  color: var(--text-3);
 }
 
-/* 右側詳情 */
+/* 詳情面板 */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+.tabs button {
+  flex: 1;
+  padding: 13px 6px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.tabs button.on {
+  color: var(--text);
+  border-bottom-color: var(--text);
+}
+
 .detail-body {
-  padding: 16px 18px;
-  max-height: 72vh;
+  padding: 18px;
+  max-height: 66vh;
   overflow-y: auto;
 }
 .detail-body h3 {
   font-size: 17px;
   margin: 0 0 6px;
+  font-weight: 700;
 }
 .detail-body .summary {
-  color: var(--ink-soft);
+  color: var(--text-2);
   font-size: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .section-label {
-  font-size: 12.5px;
-  font-weight: 800;
-  color: var(--ink-soft);
-  letter-spacing: 0.06em;
-  margin: 16px 0 8px;
-  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.08em;
+  margin: 18px 0 8px;
 }
 .action-list {
   list-style: none;
@@ -473,10 +532,9 @@ button {
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  background: #f7f9fb;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 9px 12px;
+  border-radius: 4px;
+  padding: 10px 12px;
   font-size: 14px;
 }
 .verb-badge {
@@ -484,8 +542,8 @@ button {
   font-size: 12px;
   font-weight: 700;
   color: var(--blue);
-  background: #e3eefb;
-  border-radius: 6px;
+  background: #eef4fa;
+  border-radius: 4px;
   padding: 2px 8px;
   margin-top: 2px;
   white-space: nowrap;
@@ -500,129 +558,125 @@ button {
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 99px;
-  padding: 5px 12px;
+  background: var(--bg-subtle);
+  border-radius: 64px;
+  padding: 6px 14px;
 }
 .part-chip b {
   color: var(--blue);
 }
 .part-chip .pn {
-  color: var(--ink-soft);
+  color: var(--text-3);
   font-size: 11.5px;
 }
+
+/* 提示區塊(IKEA 訊息面板:灰底 + 語意色 icon) */
 .callout {
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 10px 12px;
   font-size: 13.5px;
   margin-bottom: 8px;
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  align-items: flex-start;
+  background: var(--bg-subtle);
+  color: var(--text);
 }
-.callout.warn {
-  background: #fdf3e7;
-  border: 1px solid #f3ddc0;
-  color: #8a5200;
+.callout svg {
+  margin-top: 1px;
 }
-.callout.mistake {
-  background: #fdecec;
-  border: 1px solid #f5c9c9;
-  color: #9d2020;
-}
-.callout.orient {
-  background: #e9f4ee;
-  border: 1px solid #cbe6d6;
-  color: #14622f;
-}
-
-/* 分頁籤 */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--line);
-}
-.tabs button {
-  flex: 1;
-  padding: 11px 6px;
-  border: none;
-  background: transparent;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--ink-soft);
-  cursor: pointer;
-  border-bottom: 2.5px solid transparent;
-}
-.tabs button.on {
+.callout.orient svg {
   color: var(--blue);
-  border-bottom-color: var(--blue);
+}
+.callout.warn svg {
+  color: var(--caution);
+}
+.callout.mistake svg {
+  color: var(--negative);
+}
+.callout.tip svg {
+  color: var(--text-2);
 }
 
+/* 清單 */
 .inventory {
-  padding: 12px 16px;
-  max-height: 60vh;
+  padding: 12px 18px;
+  max-height: 62vh;
   overflow-y: auto;
 }
 .inv-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 4px;
-  border-bottom: 1px solid #f0f1f4;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bg-subtle);
   font-size: 14px;
 }
 .inv-row .qty {
   flex: none;
-  min-width: 44px;
+  min-width: 46px;
   text-align: center;
-  font-weight: 800;
-  color: var(--blue);
-  background: #eef4fb;
-  border-radius: 8px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--bg-subtle);
+  border-radius: 4px;
   padding: 3px 6px;
   font-size: 13px;
 }
 .inv-row .meta {
   font-size: 12px;
-  color: var(--ink-soft);
+  color: var(--text-3);
 }
 .kind-tag {
   margin-left: auto;
   font-size: 11px;
-  border-radius: 6px;
-  padding: 2px 7px;
-  background: #f0f1f4;
-  color: var(--ink-soft);
+  border-radius: 64px;
+  padding: 2px 9px;
+  background: var(--bg-subtle);
+  color: var(--text-2);
   white-space: nowrap;
 }
 
+.warning-illustration {
+  padding: 14px 18px 0;
+}
+.warning-illustration img {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
 .warning-card {
-  margin: 10px 16px;
-  border-radius: 10px;
+  margin: 10px 18px;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 4px;
   padding: 12px 14px;
   font-size: 13.5px;
 }
 .warning-card.danger {
-  background: #fdecec;
-  border: 1px solid #f0bcbc;
+  border-left-color: var(--negative);
 }
 .warning-card.caution {
-  background: #fdf3e7;
-  border: 1px solid #ecd7b7;
+  border-left-color: var(--caution);
 }
 .warning-card.info {
-  background: #e9f2fb;
-  border: 1px solid #c9def2;
+  border-left-color: var(--blue);
 }
 .warning-card b {
   display: block;
   margin-bottom: 3px;
 }
+.warning-card .pages {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
 
-/* 原始頁面模態框 */
+/* 原始說明書模態框 */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 25, 40, 0.6);
+  background: rgba(17, 17, 17, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -631,7 +685,7 @@ button {
 }
 .modal {
   background: #fff;
-  border-radius: var(--radius);
+  border-radius: 4px;
   max-width: 720px;
   width: 100%;
   max-height: 90vh;
@@ -643,9 +697,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--line);
   font-weight: 700;
+  font-size: 15px;
 }
 .modal-body {
   overflow-y: auto;
@@ -655,7 +710,6 @@ button {
 .modal-body img {
   max-width: 100%;
   border: 1px solid var(--line);
-  border-radius: 8px;
 }
 .modal-nav {
   display: flex;
@@ -707,5 +761,5 @@ button {
 .loading-page {
   text-align: center;
   padding: 90px 20px;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }

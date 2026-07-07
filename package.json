@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
+    "@fontsource/noto-sans-tc": "^5.2.9",
     "@napi-rs/canvas": "^1.0.2",
     "@vercel/blob": "^2.5.0",
     "@vercel/functions": "^3.7.5",

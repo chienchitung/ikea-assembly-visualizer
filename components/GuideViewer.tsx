@@ -3,6 +3,22 @@
 import { useEffect, useMemo, useState } from "react";
 import type { AssemblyGuide, Part, Step } from "@/lib/schema";
 import StepCanvas from "./StepCanvas";
+import {
+  IconCheck,
+  IconChevronLeft,
+  IconChevronRight,
+  IconCompass,
+  IconCrossCircle,
+  IconDocument,
+  IconEye,
+  IconEyeOff,
+  IconLightbulb,
+  IconMagnifierMinus,
+  IconMagnifierPlus,
+  IconReplay,
+  IconWarningTriangle,
+  IconWrench,
+} from "./icons";
 
 const VERB_LABEL: Record<string, string> = {
   insert: "插入",
@@ -65,7 +81,7 @@ export default function GuideViewer({ id }: { id: string }) {
     return m;
   }, [guide]);
 
-  if (error) return <div className="loading-page">⚠ {error}</div>;
+  if (error) return <div className="loading-page">{error}</div>;
   if (!guide) return <div className="loading-page">載入指南中…</div>;
 
   const steps = guide.steps;
@@ -87,81 +103,76 @@ export default function GuideViewer({ id }: { id: string }) {
 
   return (
     <main className="container">
-      <div className="progress-wrap">
-        <div className="progress-meta">
-          <h2>
-            {guide.product.name}
-            {guide.product.documentCode && (
-              <span
-                style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 400, marginLeft: 10 }}
-              >
-                {guide.product.documentCode}
-              </span>
-            )}
-          </h2>
+      <div className="guide-head">
+        <h2>{guide.product.name}</h2>
+        {guide.product.documentCode && (
+          <span className="doc-code">{guide.product.documentCode}</span>
+        )}
+        <div className="progress-side">
+          <div className="progress-bar">
+            <div style={{ width: `${pct}%` }} />
+          </div>
           <span className="pct">
-            已完成 {done.size} / {steps.length} 步({pct}%)
+            {done.size} / {steps.length} 步
           </span>
-        </div>
-        <div className="progress-bar">
-          <div style={{ width: `${pct}%` }} />
         </div>
       </div>
 
-      <div className="viewer">
-        {/* 左:步驟清單 */}
-        <div className="panel">
-          <div className="panel-header">🪜 組裝步驟</div>
-          <div className="step-list">
-            {steps.map((s, i) => (
-              <button
-                key={s.id}
-                className={
-                  "step-item" +
-                  (i === stepIdx ? " current" : "") +
-                  (done.has(s.id) ? " done" : "")
-                }
-                onClick={() => goTo(i)}
-              >
-                <span className="step-num">{done.has(s.id) ? "✓" : s.index}</span>
-                <span>
-                  <span className="s-title">{s.title}</span>
-                  <span className="s-sub">
-                    第 {s.pages.join("、")} 頁
-                    {s.partsUsed.length > 0 && ` · ${totalQty(s)} 個零件`}
-                  </span>
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* 步驟號碼列(對應說明書上的大數字) */}
+      <div className="step-strip" role="tablist" aria-label="組裝步驟">
+        {steps.map((s, i) => (
+          <button
+            key={s.id}
+            title={`步驟 ${s.index}:${s.title}`}
+            className={
+              "step-dot" +
+              (i === stepIdx ? " current" : "") +
+              (done.has(s.id) && i !== stepIdx ? " done" : "")
+            }
+            onClick={() => goTo(i)}
+          >
+            {done.has(s.id) && i !== stepIdx ? <IconCheck size={17} /> : s.index}
+          </button>
+        ))}
+      </div>
 
-        {/* 中:視覺化畫布 */}
-        <div className="panel canvas-panel">
+      <div className="viewer">
+        {/* 左:視覺化畫布 */}
+        <div className="panel">
           <div className="canvas-toolbar">
+            <span className="step-label">
+              步驟 {step.index}:{step.title}
+            </span>
             <button
-              className={"tool-btn" + (showAnn ? " on" : "")}
+              className={"icon-btn" + (showAnn ? " on" : "")}
+              title={showAnn ? "隱藏標註" : "顯示標註"}
               onClick={() => setShowAnn((v) => !v)}
             >
-              ✨ 標註 {showAnn ? "開" : "關"}
+              {showAnn ? <IconEye /> : <IconEyeOff />}
             </button>
             <button
-              className={"tool-btn" + (!fullPage ? " on" : "")}
+              className="icon-btn"
+              title={fullPage ? "放大細節" : "顯示整頁"}
               onClick={() => setFullPage((v) => !v)}
             >
-              {fullPage ? "🔍 放大細節" : "🗺 顯示整頁"}
-            </button>
-            <button className="tool-btn" onClick={() => setReplayKey((k) => k + 1)}>
-              ▶ 重播本步驟
+              {fullPage ? <IconMagnifierPlus /> : <IconMagnifierMinus />}
             </button>
             <button
-              className="tool-btn"
+              className="icon-btn"
+              title="重播本步驟標註"
+              onClick={() => setReplayKey((k) => k + 1)}
+            >
+              <IconReplay />
+            </button>
+            <button
+              className="icon-btn"
+              title="查看原始說明書"
               onClick={() => {
                 setOriginalPage(step.pages[0] ?? step.visual.basePage);
                 setOriginalOpen(true);
               }}
             >
-              📖 查看原始說明書
+              <IconDocument />
             </button>
           </div>
 
@@ -172,27 +183,31 @@ export default function GuideViewer({ id }: { id: string }) {
             replayKey={replayKey}
             showAnnotations={showAnn}
           />
-          {step.visual.caption && <div className="canvas-caption">{step.visual.caption}</div>}
+          {step.visual.caption && (
+            <div className="canvas-caption">{step.visual.caption}</div>
+          )}
 
           <div className="step-controls">
-            <button className="btn btn-ghost" disabled={stepIdx === 0} onClick={() => goTo(stepIdx - 1)}>
-              ← 上一步
+            <button
+              className="btn btn-secondary"
+              disabled={stepIdx === 0}
+              onClick={() => goTo(stepIdx - 1)}
+            >
+              <IconChevronLeft size={16} /> 上一步
             </button>
-            <span className="spacer" />
-            <span style={{ fontSize: 13.5, color: "var(--ink-soft)" }}>
-              步驟 {step.index} / 共 {steps.length} 步
+            <span className="mid">
+              {step.index} / {steps.length}
             </span>
-            <span className="spacer" />
             {stepIdx < steps.length - 1 ? (
               <button className="btn btn-primary" onClick={markDoneAndNext}>
-                完成,下一步 →
+                完成,下一步 <IconChevronRight size={16} />
               </button>
             ) : (
               <button
                 className="btn btn-primary"
                 onClick={() => setDone((prev) => new Set(prev).add(step.id))}
               >
-                🎉 全部完成
+                全部完成 <IconCheck size={16} />
               </button>
             )}
           </div>
@@ -205,9 +220,12 @@ export default function GuideViewer({ id }: { id: string }) {
               本步驟
             </button>
             <button className={tab === "parts" ? "on" : ""} onClick={() => setTab("parts")}>
-              零件清單
+              零件與工具
             </button>
-            <button className={tab === "warnings" ? "on" : ""} onClick={() => setTab("warnings")}>
+            <button
+              className={tab === "warnings" ? "on" : ""}
+              onClick={() => setTab("warnings")}
+            >
               注意事項
             </button>
           </div>
@@ -243,25 +261,26 @@ export default function GuideViewer({ id }: { id: string }) {
           )}
 
           {tab === "warnings" && (
-            <div style={{ padding: "8px 0", maxHeight: "62vh", overflowY: "auto" }}>
+            <div style={{ padding: "4px 0 14px", maxHeight: "62vh", overflowY: "auto" }}>
+              {/* IKEA 原廠說明書的防傾倒警告插圖 */}
+              <div className="warning-illustration">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/pictograms/anchor-warning.png" alt="固定前貼牆直立,禁止傾斜攀爬" />
+              </div>
               {guide.warnings.map((w) => (
                 <div key={w.id} className={`warning-card ${w.severity}`}>
-                  <b>
-                    {w.severity === "danger" ? "🚨" : w.severity === "caution" ? "⚠️" : "ℹ️"}{" "}
-                    {w.title}
-                  </b>
+                  <b>{w.title}</b>
                   {w.text}
-                  <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 4 }}>
-                    說明書第 {w.pages.join("、")} 頁
-                  </div>
+                  <div className="pages">說明書第 {w.pages.join("、")} 頁</div>
                 </div>
               ))}
               {guide.generalTips.length > 0 && (
-                <div style={{ padding: "4px 16px" }}>
+                <div style={{ padding: "4px 18px" }}>
                   <div className="section-label">組裝小提醒</div>
                   {guide.generalTips.map((tip, i) => (
-                    <div key={i} className="callout warn" style={{ background: "#f7f9fb", border: "1px solid var(--line)", color: "var(--ink)" }}>
-                      💡 {tip}
+                    <div key={i} className="callout tip">
+                      <IconLightbulb size={17} />
+                      <span>{tip}</span>
                     </div>
                   ))}
                 </div>
@@ -279,8 +298,8 @@ export default function GuideViewer({ id }: { id: string }) {
               <span>
                 原始說明書 — 第 {originalPage} / {guide.source.pageCount} 頁
               </span>
-              <button className="tool-btn" onClick={() => setOriginalOpen(false)}>
-                ✕ 關閉
+              <button className="icon-btn" title="關閉" onClick={() => setOriginalOpen(false)}>
+                ✕
               </button>
             </div>
             <div className="modal-body">
@@ -289,18 +308,18 @@ export default function GuideViewer({ id }: { id: string }) {
             </div>
             <div className="modal-nav">
               <button
-                className="tool-btn"
+                className="btn btn-secondary"
                 disabled={originalPage <= 1}
                 onClick={() => setOriginalPage((p) => p - 1)}
               >
-                ← 前一頁
+                <IconChevronLeft size={16} /> 前一頁
               </button>
               <button
-                className="tool-btn"
+                className="btn btn-secondary"
                 disabled={originalPage >= guide.source.pageCount}
                 onClick={() => setOriginalPage((p) => p + 1)}
               >
-                後一頁 →
+                後一頁 <IconChevronRight size={16} />
               </button>
             </div>
           </div>
@@ -308,10 +327,6 @@ export default function GuideViewer({ id }: { id: string }) {
       )}
     </main>
   );
-}
-
-function totalQty(s: Step): number {
-  return s.partsUsed.reduce((sum, u) => sum + u.quantity, 0);
 }
 
 function StepDetail({
@@ -364,7 +379,7 @@ function StepDetail({
           <div className="chip-row">
             {step.toolsUsed.map((tid) => (
               <span className="part-chip" key={tid}>
-                🔧 {toolById.get(tid)?.name ?? tid}
+                <IconWrench size={14} /> {toolById.get(tid)?.name ?? tid}
               </span>
             ))}
           </div>
@@ -374,7 +389,10 @@ function StepDetail({
       {step.orientation && (
         <>
           <div className="section-label">方向與位置</div>
-          <div className="callout orient">🧭 {step.orientation}</div>
+          <div className="callout orient">
+            <IconCompass size={17} />
+            <span>{step.orientation}</span>
+          </div>
         </>
       )}
 
@@ -383,7 +401,8 @@ function StepDetail({
           <div className="section-label">注意事項</div>
           {step.cautions.map((c, i) => (
             <div className="callout warn" key={i}>
-              ⚠️ {c}
+              <IconWarningTriangle size={17} />
+              <span>{c}</span>
             </div>
           ))}
         </>
@@ -394,7 +413,8 @@ function StepDetail({
           <div className="section-label">常見錯誤</div>
           {step.commonMistakes.map((m, i) => (
             <div className="callout mistake" key={i}>
-              ❌ {m}
+              <IconCrossCircle size={17} />
+              <span>{m}</span>
             </div>
           ))}
         </>
