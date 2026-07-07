@@ -13,7 +13,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="topbar">
           <div className="container">
-            <span className="logo">IKEA</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="logo-img" src="/ikea-logo.svg" alt="IKEA" />
             <span className="topbar-title">組裝說明書視覺化指南</span>
             <Link className="home-link" href="/">
               ↩ 回首頁
