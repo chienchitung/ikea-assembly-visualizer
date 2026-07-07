@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/assembly-guide-1.0.json",
+  "title": "AssemblyGuide",
+  "description": "IKEA 組裝說明書解析後的結構化互動指南格式。所有座標為正規化座標(相對頁面圖片,0~1,原點在左上)。",
+  "type": "object",
+  "required": ["schemaVersion", "product", "source", "parts", "tools", "warnings", "steps", "generalTips"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "product": {
+      "type": "object",
+      "required": ["name", "documentCode", "category", "description"],
+      "properties": {
+        "name": { "type": "string", "description": "家具名稱,如 KALLAX 層架組" },
+        "documentCode": { "type": ["string", "null"], "description": "說明書文件編號,如 AA-2051412-6" },
+        "category": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["fileType", "pageCount"],
+      "properties": {
+        "fileType": { "enum": ["pdf", "image"] },
+        "pageCount": { "type": "integer" }
+      }
+    },
+    "parts": { "type": "array", "items": { "$ref": "#/$defs/part" } },
+    "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" } },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/warning" } },
+    "steps": { "type": "array", "items": { "$ref": "#/$defs/step" } },
+    "generalTips": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "bbox": {
+      "type": "object",
+      "description": "正規化矩形",
+      "required": ["x", "y", "w", "h"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "w": { "type": "number" },
+        "h": { "type": "number" }
+      }
+    },
+    "point": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+    },
+    "part": {
+      "type": "object",
+      "required": ["id", "name", "partNumber", "quantity", "kind", "description", "imageRef"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "partNumber": { "type": ["string", "null"], "description": "IKEA 六碼零件料號" },
+        "quantity": { "type": "number" },
+        "kind": { "enum": ["panel", "hardware", "fitting", "accessory"] },
+        "description": { "type": ["string", "null"] },
+        "imageRef": {
+          "type": ["object", "null"],
+          "required": ["page", "bbox"],
+          "properties": {
+            "page": { "type": "integer" },
+            "bbox": { "$ref": "#/$defs/bbox" }
+          }
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "required": ["id", "name", "includedInBox", "note"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "includedInBox": { "type": "boolean" },
+        "note": { "type": ["string", "null"] }
+      }
+    },
+    "warning": {
+      "type": "object",
+      "required": ["id", "severity", "title", "text", "pages"],
+      "properties": {
+        "id": { "type": "string" },
+        "severity": { "enum": ["danger", "caution", "info"] },
+        "title": { "type": "string" },
+        "text": { "type": "string" },
+        "pages": { "type": "array", "items": { "type": "integer" } }
+      }
+    },
+    "annotation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "shape", "bbox", "label", "tone"],
+          "properties": {
+            "type": { "const": "highlight" },
+            "shape": { "enum": ["rect", "circle"] },
+            "bbox": { "$ref": "#/$defs/bbox" },
+            "label": { "type": ["string", "null"] },
+            "tone": { "enum": ["part", "hardware", "target", "warning"] }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "from", "to", "label", "tone"],
+          "properties": {
+            "type": { "const": "arrow" },
+            "from": { "$ref": "#/$defs/point" },
+            "to": { "$ref": "#/$defs/point" },
+            "label": { "type": ["string", "null"] },
+            "tone": { "enum": ["move", "rotate", "warning"] }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "at", "label", "tone"],
+          "properties": {
+            "type": { "const": "marker" },
+            "at": { "$ref": "#/$defs/point" },
+            "label": { "type": "string" },
+            "tone": { "enum": ["hardware", "target", "warning"] }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "bbox", "note"],
+          "properties": {
+            "type": { "const": "zoom" },
+            "bbox": { "$ref": "#/$defs/bbox" },
+            "note": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "correct", "wrong", "note"],
+          "properties": {
+            "type": { "const": "compare" },
+            "correct": { "oneOf": [{ "$ref": "#/$defs/bbox" }, { "type": "null" }] },
+            "wrong": { "oneOf": [{ "$ref": "#/$defs/bbox" }, { "type": "null" }] },
+            "note": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "visualSpec": {
+      "type": "object",
+      "description": "步驟的視覺化呈現指令:以說明書某頁為底圖,疊加標註",
+      "required": ["basePage", "focus", "annotations", "caption"],
+      "properties": {
+        "basePage": { "type": "integer" },
+        "focus": { "oneOf": [{ "$ref": "#/$defs/bbox" }, { "type": "null" }] },
+        "annotations": { "type": "array", "items": { "$ref": "#/$defs/annotation" } },
+        "caption": { "type": ["string", "null"] }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "index", "title", "summary", "pages", "actions", "partsUsed", "toolsUsed", "orientation", "cautions", "commonMistakes", "visual"],
+      "properties": {
+        "id": { "type": "string" },
+        "index": { "type": "number" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "pages": { "type": "array", "items": { "type": "integer" } },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["verb", "text"],
+            "properties": {
+              "verb": { "enum": ["insert", "align", "screw", "hammer", "rotate", "flip", "attach", "place", "slide", "mark", "drill", "press", "check"] },
+              "text": { "type": "string" }
+            }
+          }
+        },
+        "partsUsed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["partId", "quantity"],
+            "properties": {
+              "partId": { "type": "string" },
+              "quantity": { "type": "number" }
+            }
+          }
+        },
+        "toolsUsed": { "type": "array", "items": { "type": "string" } },
+        "orientation": { "type": ["string", "null"] },
+        "cautions": { "type": "array", "items": { "type": "string" } },
+        "commonMistakes": { "type": "array", "items": { "type": "string" } },
+        "visual": { "$ref": "#/$defs/visualSpec" }
+      }
+    }
+  }
+}

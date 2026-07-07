@@ -1,0 +1,661 @@
+{
+  "schemaVersion": "1.0",
+  "product": {
+    "name": "KALLAX 層架組(4×3)",
+    "documentCode": "AA-2051412-6",
+    "category": "層架 / 收納櫃",
+    "description": "12 格開放式層架,可直放(3 寬 × 4 高)或橫放(4 寬 × 3 高),完成後必須以隨附固定件固定於牆面。"
+  },
+  "source": { "fileType": "pdf", "pageCount": 24 },
+  "parts": [
+    {
+      "id": "PA",
+      "name": "外框側板(長)",
+      "partNumber": null,
+      "quantity": 2,
+      "kind": "panel",
+      "description": "構成外框的兩片長側板,端面有預鑽螺絲孔",
+      "imageRef": { "page": 7, "bbox": { "x": 0.1, "y": 0.55, "w": 0.85, "h": 0.38 } }
+    },
+    {
+      "id": "PB",
+      "name": "外框側板(短)",
+      "partNumber": null,
+      "quantity": 2,
+      "kind": "panel",
+      "description": "構成外框的兩片短側板",
+      "imageRef": { "page": 12, "bbox": { "x": 0.1, "y": 0.2, "w": 0.35, "h": 0.3 } }
+    },
+    {
+      "id": "PC",
+      "name": "內部長隔板",
+      "partNumber": null,
+      "quantity": 3,
+      "kind": "panel",
+      "description": "橫貫整個櫃體的長隔板,把層架分成 4 排",
+      "imageRef": { "page": 8, "bbox": { "x": 0.15, "y": 0.6, "w": 0.45, "h": 0.18 } }
+    },
+    {
+      "id": "PD",
+      "name": "內部短隔板",
+      "partNumber": null,
+      "quantity": 8,
+      "kind": "panel",
+      "description": "每排 2 片,把每排分成 3 格",
+      "imageRef": { "page": 8, "bbox": { "x": 0.3, "y": 0.22, "w": 0.28, "h": 0.2 } }
+    },
+    {
+      "id": "HW-104321",
+      "name": "長螺絲",
+      "partNumber": "104321",
+      "quantity": 8,
+      "kind": "hardware",
+      "description": "沉頭長螺絲(或 104322),用於外框角落接合",
+      "imageRef": { "page": 6, "bbox": { "x": 0.06, "y": 0.07, "w": 0.1, "h": 0.24 } }
+    },
+    {
+      "id": "HW-101339",
+      "name": "木榫",
+      "partNumber": "101339",
+      "quantity": 64,
+      "kind": "hardware",
+      "description": "所有隔板都靠木榫定位接合",
+      "imageRef": { "page": 6, "bbox": { "x": 0.19, "y": 0.12, "w": 0.08, "h": 0.17 } }
+    },
+    {
+      "id": "HW-100372",
+      "name": "小螺絲",
+      "partNumber": "100372",
+      "quantity": 4,
+      "kind": "hardware",
+      "description": "用來把牆面固定件鎖在櫃體上",
+      "imageRef": { "page": 6, "bbox": { "x": 0.3, "y": 0.2, "w": 0.06, "h": 0.1 } }
+    },
+    {
+      "id": "HW-109142",
+      "name": "遮孔貼片",
+      "partNumber": "109142",
+      "quantity": 8,
+      "kind": "accessory",
+      "description": "貼在外露螺絲孔上的圓形貼片(或 153550)",
+      "imageRef": { "page": 6, "bbox": { "x": 0.42, "y": 0.16, "w": 0.2, "h": 0.16 } }
+    },
+    {
+      "id": "F-115753",
+      "name": "牆面固定件",
+      "partNumber": "115753",
+      "quantity": 2,
+      "kind": "fitting",
+      "description": "L 形防傾倒固定件,鎖在櫃頂後方",
+      "imageRef": { "page": 6, "bbox": { "x": 0.05, "y": 0.42, "w": 0.22, "h": 0.2 } }
+    },
+    {
+      "id": "F-115754",
+      "name": "固定件外蓋",
+      "partNumber": "115754",
+      "quantity": 2,
+      "kind": "fitting",
+      "description": "蓋住牆面固定件的美化外蓋(或 118225 / 118673)",
+      "imageRef": { "page": 6, "bbox": { "x": 0.36, "y": 0.42, "w": 0.24, "h": 0.2 } }
+    },
+    {
+      "id": "F-103693",
+      "name": "金屬鎖片",
+      "partNumber": "103693",
+      "quantity": 2,
+      "kind": "fitting",
+      "description": "鑰匙孔形金屬片,把外蓋掛在固定件上",
+      "imageRef": { "page": 6, "bbox": { "x": 0.68, "y": 0.44, "w": 0.12, "h": 0.16 } }
+    }
+  ],
+  "tools": [
+    {
+      "id": "T-100092",
+      "name": "六角板手 100092",
+      "includedInBox": true,
+      "note": "包裝內附"
+    },
+    {
+      "id": "T-121030",
+      "name": "螺絲定位器 121030",
+      "includedInBox": true,
+      "note": "包裝內附,鎖螺絲時夾住螺絲防滑"
+    },
+    {
+      "id": "T-screwdriver",
+      "name": "十字螺絲起子",
+      "includedInBox": false,
+      "note": "需自備,用於牆面固定件"
+    },
+    {
+      "id": "T-pencil",
+      "name": "鉛筆",
+      "includedInBox": false,
+      "note": "需自備,標記牆面鑽孔位置"
+    },
+    {
+      "id": "T-wallanchor",
+      "name": "牆用螺絲與壁虎",
+      "includedInBox": false,
+      "note": "不隨附!請依你家牆面材質(水泥/輕隔間/磚牆)選購合適的螺絲與壁栓"
+    }
+  ],
+  "warnings": [
+    {
+      "id": "W1",
+      "severity": "danger",
+      "title": "傾倒可能造成嚴重甚至致命的壓傷",
+      "text": "本家具必須使用隨附的牆面固定裝置固定於牆面,防止傾倒。牆用螺絲與壁栓不隨附,請選用適合你家牆面的五金;不確定時請洽詢專業人員。",
+      "pages": [2, 3, 4, 14, 19]
+    },
+    {
+      "id": "W2",
+      "severity": "caution",
+      "title": "請兩人一起組裝",
+      "text": "板件大而重,單人組裝容易受傷或損壞板件,說明書明確標示需要兩人。",
+      "pages": [5]
+    },
+    {
+      "id": "W3",
+      "severity": "caution",
+      "title": "在軟墊或地毯上組裝",
+      "text": "直接在硬地板上組裝會刮傷板面、撞壞板角,請鋪地毯或包裝紙板再開始。",
+      "pages": [5]
+    },
+    {
+      "id": "W4",
+      "severity": "caution",
+      "title": "固定前勿直立閒置、勿傾斜搬動",
+      "text": "櫃體立起後在固定於牆面之前必須貼牆放置,禁止傾斜拖行或攀爬。",
+      "pages": [14, 19]
+    },
+    {
+      "id": "W5",
+      "severity": "info",
+      "title": "有疑問就問 IKEA",
+      "text": "組裝過程有任何疑問,請聯絡當地 IKEA 商場客服。",
+      "pages": [5]
+    }
+  ],
+  "generalTips": [
+    "開始前先清點零件:木榫共 64 支、長螺絲 8 顆,少件先補齊再開工。",
+    "全程在地毯或軟墊上組裝,板面朝下時尤其要注意防刮。",
+    "木榫用手壓入即可,若太緊可用橡膠槌輕敲,不要用鐵鎚直接敲板件。",
+    "每一步先確認板件方向(預鑽孔位置)再插木榫,拆掉重來最容易傷板件。",
+    "直放與橫放的牆面固定步驟不同:直放看第 13–17 頁,橫放看第 18–22 頁。"
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "index": 1,
+      "title": "鎖入起始螺絲,擺好外框",
+      "summary": "把 2 顆長螺絲先鎖進外框板端面,再將兩片外框板呈 L 形立放在地毯上。",
+      "pages": [7],
+      "actions": [
+        { "verb": "insert", "text": "把長螺絲 104321 放入螺絲定位器 121030 夾住,對準外框板端面的預鑽孔。" },
+        { "verb": "screw", "text": "用內附六角板手把 2 顆螺絲鎖入,先不要完全鎖死(留最後對位的餘裕)。" },
+        { "verb": "place", "text": "將兩片外框板如圖呈 L 形立放在地毯上,有預鑽孔的一面朝內。" }
+      ],
+      "partsUsed": [
+        { "partId": "PA", "quantity": 1 },
+        { "partId": "PB", "quantity": 1 },
+        { "partId": "HW-104321", "quantity": 2 }
+      ],
+      "toolsUsed": ["T-100092", "T-121030"],
+      "orientation": "板件端面的預鑽螺絲孔朝向轉角處;側面一排木榫孔朝內(之後要接隔板)。",
+      "cautions": ["兩片板呈 90° 靠穩再放手,避免倒下砸傷。"],
+      "commonMistakes": ["把螺絲一次鎖到底 — 之後對位會很難調整。", "板件放反,木榫孔朝外。"],
+      "visual": {
+        "basePage": 7,
+        "focus": null,
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.11, "y": 0.14, "w": 0.31, "h": 0.18 }, "note": "用螺絲定位器 121030 + 六角板手 100092" },
+          { "type": "zoom", "bbox": { "x": 0.2, "y": 0.33, "w": 0.32, "h": 0.2 }, "note": "先鎖入 2 顆長螺絲 104321" },
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.09, "y": 0.53, "w": 0.86, "h": 0.4 }, "label": "兩片外框板呈 L 形立放", "tone": "part" },
+          { "type": "marker", "at": { "x": 0.41, "y": 0.55 }, "label": "1", "tone": "hardware" },
+          { "type": "marker", "at": { "x": 0.3, "y": 0.63 }, "label": "2", "tone": "hardware" }
+        ],
+        "caption": "步驟 1|先鎖 2 顆螺絲,再把兩片外框板擺成 L 形"
+      }
+    },
+    {
+      "id": "s2",
+      "index": 2,
+      "title": "插 8 支木榫,裝第一排短隔板",
+      "summary": "在第一排位置插入 8 支木榫,將 2 片短隔板接上外框板。",
+      "pages": [8],
+      "actions": [
+        { "verb": "insert", "text": "在 2 片短隔板的兩端孔位插入共 8 支木榫 101339,用手壓到底。" },
+        { "verb": "align", "text": "把短隔板對準外框板上的第一排孔位。" },
+        { "verb": "press", "text": "壓入接合,確認隔板與外框板貼合無縫隙。" }
+      ],
+      "partsUsed": [
+        { "partId": "PD", "quantity": 2 },
+        { "partId": "HW-101339", "quantity": 8 }
+      ],
+      "toolsUsed": [],
+      "orientation": "兩片短隔板互相平行、等距,構成第一排的 3 格分隔。",
+      "cautions": ["木榫務必插到底,否則後續每一層都會歪。"],
+      "commonMistakes": ["隔板插錯排孔位 — 每排孔位間距相同,容易跳排。"],
+      "visual": {
+        "basePage": 8,
+        "focus": { "x": 0.05, "y": 0.04, "w": 0.9, "h": 0.42 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.45, "y": 0.06, "w": 0.34, "h": 0.16 }, "note": "8 支木榫 101339" },
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.31, "y": 0.24, "w": 0.27, "h": 0.19 }, "label": "2 片短隔板", "tone": "part" },
+          { "type": "arrow", "from": { "x": 0.36, "y": 0.31 }, "to": { "x": 0.46, "y": 0.26 }, "label": "插入外框板孔位", "tone": "move" }
+        ],
+        "caption": "步驟 2|短隔板 ×2 + 木榫 ×8"
+      }
+    },
+    {
+      "id": "s3",
+      "index": 3,
+      "title": "插 4 支木榫,蓋上第一片長隔板",
+      "summary": "在短隔板頂端插入 4 支木榫,將第一片長隔板橫放接合,完成第一排。",
+      "pages": [8],
+      "actions": [
+        { "verb": "insert", "text": "在剛裝好的 2 片短隔板頂端插入共 4 支木榫。" },
+        { "verb": "align", "text": "長隔板的孔位對準短隔板頂端與外框板側孔。" },
+        { "verb": "press", "text": "由一端往另一端依序壓入接合。" }
+      ],
+      "partsUsed": [
+        { "partId": "PC", "quantity": 1 },
+        { "partId": "HW-101339", "quantity": 4 }
+      ],
+      "toolsUsed": [],
+      "orientation": "長隔板兩面孔位不同:單面孔朝下對準短隔板,雙面孔朝上(下一排還要接)。",
+      "cautions": ["對位時請兩人一人扶一端,避免單邊受力折斷木榫。"],
+      "commonMistakes": ["長隔板上下面裝反,導致下一排短隔板沒孔可插。"],
+      "visual": {
+        "basePage": 8,
+        "focus": { "x": 0.05, "y": 0.48, "w": 0.9, "h": 0.47 },
+        "annotations": [
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.13, "y": 0.6, "w": 0.5, "h": 0.2 }, "label": "長隔板", "tone": "part" },
+          { "type": "zoom", "bbox": { "x": 0.33, "y": 0.79, "w": 0.32, "h": 0.15 }, "note": "4 支木榫 101339" },
+          { "type": "arrow", "from": { "x": 0.38, "y": 0.68 }, "to": { "x": 0.52, "y": 0.61 }, "label": "對準壓入", "tone": "move" }
+        ],
+        "caption": "步驟 3|第一片長隔板就位,完成第一排"
+      }
+    },
+    {
+      "id": "s4",
+      "index": 4,
+      "title": "第二排短隔板(木榫 ×8)",
+      "summary": "重複隔板工法:插 8 支木榫,把第二排的 2 片短隔板裝上。",
+      "pages": [9],
+      "actions": [
+        { "verb": "insert", "text": "2 片短隔板兩端插入共 8 支木榫。" },
+        { "verb": "align", "text": "對準長隔板上的孔位,位置與第一排的短隔板上下對齊。" },
+        { "verb": "press", "text": "垂直壓入接合。" }
+      ],
+      "partsUsed": [
+        { "partId": "PD", "quantity": 2 },
+        { "partId": "HW-101339", "quantity": 8 }
+      ],
+      "toolsUsed": [],
+      "orientation": "短隔板必須與第一排的短隔板在同一直線上,格子才會方正。",
+      "cautions": ["每裝完一排就目測一次格子是否方正,歪了立刻調整。"],
+      "commonMistakes": ["短隔板沒有和下一層對齊,整面牆的直隔線歪斜。"],
+      "visual": {
+        "basePage": 9,
+        "focus": { "x": 0.05, "y": 0.03, "w": 0.9, "h": 0.44 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.5, "y": 0.05, "w": 0.32, "h": 0.15 }, "note": "8 支木榫 101339" },
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.33, "y": 0.2, "w": 0.3, "h": 0.18 }, "label": "第二排短隔板 ×2", "tone": "part" },
+          { "type": "arrow", "from": { "x": 0.4, "y": 0.28 }, "to": { "x": 0.5, "y": 0.23 }, "label": null, "tone": "move" }
+        ],
+        "caption": "步驟 4|第二排短隔板"
+      }
+    },
+    {
+      "id": "s5",
+      "index": 5,
+      "title": "第二片長隔板(木榫 ×4)",
+      "summary": "插 4 支木榫,蓋上第二片長隔板,完成第二排。",
+      "pages": [9],
+      "actions": [
+        { "verb": "insert", "text": "短隔板頂端插入共 4 支木榫。" },
+        { "verb": "press", "text": "第二片長隔板對準孔位壓入接合。" }
+      ],
+      "partsUsed": [
+        { "partId": "PC", "quantity": 1 },
+        { "partId": "HW-101339", "quantity": 4 }
+      ],
+      "toolsUsed": [],
+      "orientation": "與步驟 3 相同:雙面有孔的一面朝上。",
+      "cautions": [],
+      "commonMistakes": ["漏插木榫就直接壓板 — 壓下去才發現少一支,又要整片拆起來。"],
+      "visual": {
+        "basePage": 9,
+        "focus": { "x": 0.05, "y": 0.5, "w": 0.9, "h": 0.46 },
+        "annotations": [
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.15, "y": 0.62, "w": 0.55, "h": 0.2 }, "label": "第二片長隔板", "tone": "part" },
+          { "type": "zoom", "bbox": { "x": 0.4, "y": 0.79, "w": 0.32, "h": 0.16 }, "note": "4 支木榫 101339" }
+        ],
+        "caption": "步驟 5|完成第二排"
+      }
+    },
+    {
+      "id": "s6",
+      "index": 6,
+      "title": "第三排短隔板(木榫 ×8)",
+      "summary": "同樣工法,裝上第三排的 2 片短隔板。",
+      "pages": [10],
+      "actions": [
+        { "verb": "insert", "text": "2 片短隔板插入共 8 支木榫。" },
+        { "verb": "press", "text": "對準上一片長隔板的孔位壓入。" }
+      ],
+      "partsUsed": [
+        { "partId": "PD", "quantity": 2 },
+        { "partId": "HW-101339", "quantity": 8 }
+      ],
+      "toolsUsed": [],
+      "orientation": "持續保持短隔板上下對齊。",
+      "cautions": ["結構越疊越高,壓入時請扶住整體避免晃動。"],
+      "commonMistakes": [],
+      "visual": {
+        "basePage": 10,
+        "focus": { "x": 0.05, "y": 0.03, "w": 0.9, "h": 0.44 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.52, "y": 0.06, "w": 0.32, "h": 0.15 }, "note": "8 支木榫 101339" },
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.35, "y": 0.22, "w": 0.28, "h": 0.18 }, "label": "第三排短隔板 ×2", "tone": "part" }
+        ],
+        "caption": "步驟 6|第三排短隔板"
+      }
+    },
+    {
+      "id": "s7",
+      "index": 7,
+      "title": "第三片長隔板(木榫 ×4)",
+      "summary": "插 4 支木榫,蓋上最後一片長隔板。",
+      "pages": [10],
+      "actions": [
+        { "verb": "insert", "text": "短隔板頂端插入共 4 支木榫。" },
+        { "verb": "press", "text": "第三片長隔板壓入接合,完成第三排。" }
+      ],
+      "partsUsed": [
+        { "partId": "PC", "quantity": 1 },
+        { "partId": "HW-101339", "quantity": 4 }
+      ],
+      "toolsUsed": [],
+      "orientation": "與前兩片長隔板方向一致。",
+      "cautions": [],
+      "commonMistakes": [],
+      "visual": {
+        "basePage": 10,
+        "focus": { "x": 0.05, "y": 0.5, "w": 0.9, "h": 0.47 },
+        "annotations": [
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.17, "y": 0.63, "w": 0.55, "h": 0.2 }, "label": "第三片長隔板", "tone": "part" },
+          { "type": "zoom", "bbox": { "x": 0.42, "y": 0.81, "w": 0.32, "h": 0.15 }, "note": "4 支木榫 101339" }
+        ],
+        "caption": "步驟 7|完成第三排"
+      }
+    },
+    {
+      "id": "s8",
+      "index": 8,
+      "title": "第四排短隔板(木榫 ×8)",
+      "summary": "裝上最後一排的 2 片短隔板,內部格狀結構完成。",
+      "pages": [11],
+      "actions": [
+        { "verb": "insert", "text": "最後 2 片短隔板插入共 8 支木榫。" },
+        { "verb": "press", "text": "對準壓入,完成 12 格的內部結構。" }
+      ],
+      "partsUsed": [
+        { "partId": "PD", "quantity": 2 },
+        { "partId": "HW-101339", "quantity": 8 }
+      ],
+      "toolsUsed": [],
+      "orientation": "這排短隔板頂端稍後要接最外側的外框板。",
+      "cautions": [],
+      "commonMistakes": [],
+      "visual": {
+        "basePage": 11,
+        "focus": { "x": 0.05, "y": 0.03, "w": 0.9, "h": 0.44 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.55, "y": 0.05, "w": 0.32, "h": 0.15 }, "note": "8 支木榫 101339" },
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.36, "y": 0.22, "w": 0.3, "h": 0.2 }, "label": "最後一排短隔板 ×2", "tone": "part" }
+        ],
+        "caption": "步驟 8|內部格狀結構完成"
+      }
+    },
+    {
+      "id": "s9",
+      "index": 9,
+      "title": "外露孔位插滿 20 支木榫",
+      "summary": "把所有外露邊緣的孔位插上共 20 支木榫,準備接合最外側外框板。",
+      "pages": [11],
+      "actions": [
+        { "verb": "insert", "text": "沿著開口側所有隔板端面與外框板邊緣,插入共 20 支木榫。" },
+        { "verb": "check", "text": "逐一確認每支木榫都插到底、沒有漏插(這一步用掉剩下所有木榫)。" }
+      ],
+      "partsUsed": [{ "partId": "HW-101339", "quantity": 20 }],
+      "toolsUsed": [],
+      "orientation": "木榫插在朝上的整圈開口面:外框板邊緣與每片隔板的端面。",
+      "cautions": ["這一步結束時 64 支木榫應剛好用完,有剩表示某處漏插。"],
+      "commonMistakes": ["漏插中間隔板端面的木榫,蓋上外框板後才發現接不牢。"],
+      "visual": {
+        "basePage": 11,
+        "focus": { "x": 0.03, "y": 0.48, "w": 0.94, "h": 0.48 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.04, "y": 0.74, "w": 0.28, "h": 0.17 }, "note": "共 20 支木榫 101339" },
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.2, "y": 0.55, "w": 0.68, "h": 0.32 }, "label": "所有外露孔位", "tone": "target" },
+          { "type": "marker", "at": { "x": 0.3, "y": 0.62 }, "label": "•", "tone": "hardware" },
+          { "type": "marker", "at": { "x": 0.47, "y": 0.66 }, "label": "•", "tone": "hardware" },
+          { "type": "marker", "at": { "x": 0.63, "y": 0.7 }, "label": "•", "tone": "hardware" }
+        ],
+        "caption": "步驟 9|開口面整圈插滿木榫"
+      }
+    },
+    {
+      "id": "s10",
+      "index": 10,
+      "title": "蓋上外框長板",
+      "summary": "把另一片外框長板沿箭頭方向對準所有木榫,整片壓入接合。",
+      "pages": [12],
+      "actions": [
+        { "verb": "check", "text": "先看小圖:板上的預鑽孔面(有小孔的一面)必須朝向正確方向。" },
+        { "verb": "align", "text": "兩人抬起外框長板,對準整排木榫與隔板端面。" },
+        { "verb": "slide", "text": "沿箭頭方向整片放下,從一端往另一端依序壓實。" }
+      ],
+      "partsUsed": [{ "partId": "PA", "quantity": 1 }],
+      "toolsUsed": [],
+      "orientation": "板面上供牆面固定件使用的預鑽小孔要落在櫃體「頂端」那一側(參考頁面右上小圖)。",
+      "cautions": ["務必兩人一起操作,單人容易壓歪木榫。"],
+      "commonMistakes": ["板子方向 180° 裝反,固定件預鑽孔跑到底部。"],
+      "visual": {
+        "basePage": 12,
+        "focus": { "x": 0.03, "y": 0.03, "w": 0.94, "h": 0.42 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.25, "y": 0.04, "w": 0.28, "h": 0.1 }, "note": "確認預鑽孔的位置與方向" },
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.12, "y": 0.17, "w": 0.3, "h": 0.16 }, "label": "外框長板", "tone": "part" },
+          { "type": "arrow", "from": { "x": 0.18, "y": 0.28 }, "to": { "x": 0.34, "y": 0.22 }, "label": "沿箭頭壓入", "tone": "move" }
+        ],
+        "caption": "步驟 10|外框長板整片接合"
+      }
+    },
+    {
+      "id": "s11",
+      "index": 11,
+      "title": "立起櫃體,鎖上最後一片外框板(螺絲 ×6)",
+      "summary": "把結構翻立起來,接上最後一片外框板,並在角落鎖入 6 顆長螺絲完成外框。",
+      "pages": [12],
+      "actions": [
+        { "verb": "rotate", "text": "兩人合力把整個結構如小圖所示翻立起來。" },
+        { "verb": "attach", "text": "把最後一片外框板對準木榫壓入。" },
+        { "verb": "screw", "text": "在外框四角的預鑽孔鎖入 6 顆長螺絲 104321,用六角板手全部鎖緊。" },
+        { "verb": "check", "text": "回頭把步驟 1 預鎖的 2 顆螺絲也一併鎖緊。" }
+      ],
+      "partsUsed": [
+        { "partId": "PB", "quantity": 1 },
+        { "partId": "HW-104321", "quantity": 6 }
+      ],
+      "toolsUsed": ["T-100092", "T-121030"],
+      "orientation": "翻立時抓住外框,不要抓內部隔板施力。",
+      "cautions": ["翻轉時遠離小孩與寵物,板件重量集中容易夾手。"],
+      "commonMistakes": ["只鎖新的 6 顆螺絲,忘了回鎖步驟 1 的 2 顆。"],
+      "visual": {
+        "basePage": 12,
+        "focus": { "x": 0.03, "y": 0.44, "w": 0.94, "h": 0.53 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.62, "y": 0.45, "w": 0.3, "h": 0.1 }, "note": "先如小圖翻立櫃體" },
+          { "type": "zoom", "bbox": { "x": 0.12, "y": 0.76, "w": 0.3, "h": 0.18 }, "note": "6 顆長螺絲 104321" },
+          { "type": "marker", "at": { "x": 0.16, "y": 0.58 }, "label": "1", "tone": "hardware" },
+          { "type": "marker", "at": { "x": 0.2, "y": 0.66 }, "label": "2", "tone": "hardware" },
+          { "type": "marker", "at": { "x": 0.68, "y": 0.62 }, "label": "3", "tone": "hardware" },
+          { "type": "marker", "at": { "x": 0.63, "y": 0.71 }, "label": "4", "tone": "hardware" }
+        ],
+        "caption": "步驟 11|完成外框並鎖緊全部螺絲"
+      }
+    },
+    {
+      "id": "s12",
+      "index": 12,
+      "title": "選擇擺放方向,貼上遮孔貼片",
+      "summary": "決定直放或橫放後靠牆就位,把外露的螺絲孔貼上圓形遮孔貼片(直放 4 個、橫放 8 個)。",
+      "pages": [13, 18],
+      "actions": [
+        { "verb": "place", "text": "決定直放(3 寬 × 4 高)或橫放(4 寬 × 3 高),把櫃體貼牆放到定位。" },
+        { "verb": "check", "text": "橫放的後續固定步驟請看說明書第 18–22 頁,直放看第 13–17 頁。" },
+        { "verb": "press", "text": "把遮孔貼片撕下,用手指壓貼在外露的螺絲孔上(直放 4 個、橫放 8 個)。" }
+      ],
+      "partsUsed": [{ "partId": "HW-109142", "quantity": 4 }],
+      "toolsUsed": [],
+      "orientation": "貼片貼在完成後朝外可見的螺絲孔;貼之前先確定方向,貼錯撕起來會留痕。",
+      "cautions": ["就定位再貼片 — 櫃體之後不應再翻轉。"],
+      "commonMistakes": ["還沒決定直放橫放就先貼片,結果貼錯面。"],
+      "visual": {
+        "basePage": 13,
+        "focus": null,
+        "annotations": [
+          { "type": "compare", "correct": { "x": 0.05, "y": 0.04, "w": 0.28, "h": 0.2 }, "wrong": null, "note": "直放:接第 13–17 頁" },
+          { "type": "zoom", "bbox": { "x": 0.34, "y": 0.04, "w": 0.32, "h": 0.22 }, "note": "橫放:改看第 18–22 頁" },
+          { "type": "zoom", "bbox": { "x": 0.28, "y": 0.33, "w": 0.3, "h": 0.17 }, "note": "遮孔貼片 109142,共 4 處(橫放 8 處)" },
+          { "type": "marker", "at": { "x": 0.45, "y": 0.55 }, "label": "1", "tone": "target" },
+          { "type": "marker", "at": { "x": 0.13, "y": 0.64 }, "label": "2", "tone": "target" },
+          { "type": "marker", "at": { "x": 0.1, "y": 0.74 }, "label": "3", "tone": "target" }
+        ],
+        "caption": "步驟 12|靠牆就位 + 遮孔貼片"
+      }
+    },
+    {
+      "id": "s13",
+      "index": 13,
+      "title": "鎖上牆面固定件",
+      "summary": "在櫃頂後方兩側,用 4 顆小螺絲把 2 個 L 形牆面固定件鎖上櫃體。",
+      "pages": [14, 19],
+      "actions": [
+        { "verb": "check", "text": "看清楚警告圖:櫃體未固定前必須貼牆直立,禁止傾斜或攀爬。" },
+        { "verb": "align", "text": "把 2 個牆面固定件 115753 對準櫃頂後方左右兩側的預鑽孔。" },
+        { "verb": "screw", "text": "每個固定件用 2 顆小螺絲 100372(共 4 顆),以十字螺絲起子鎖緊。" }
+      ],
+      "partsUsed": [
+        { "partId": "F-115753", "quantity": 2 },
+        { "partId": "HW-100372", "quantity": 4 }
+      ],
+      "toolsUsed": ["T-screwdriver"],
+      "orientation": "固定件的大圓孔面朝牆,鎖螺絲的翼面貼櫃頂(直放鎖頂板、橫放位置見第 19 頁)。",
+      "cautions": ["這是防傾倒的關鍵步驟,絕對不可省略 — 傾倒可能造成致命壓傷。"],
+      "commonMistakes": ["固定件裝在櫃體前側而不是靠牆側。"],
+      "visual": {
+        "basePage": 14,
+        "focus": null,
+        "annotations": [
+          { "type": "compare", "correct": { "x": 0.05, "y": 0.04, "w": 0.29, "h": 0.19 }, "wrong": { "x": 0.4, "y": 0.04, "w": 0.33, "h": 0.19 }, "note": "固定前貼牆直立,禁止傾斜" },
+          { "type": "zoom", "bbox": { "x": 0.17, "y": 0.28, "w": 0.33, "h": 0.19 }, "note": "固定件 115753 ×2,小螺絲 100372 各 2 顆" },
+          { "type": "highlight", "shape": "circle", "bbox": { "x": 0.55, "y": 0.32, "w": 0.2, "h": 0.06 }, "label": "鎖在櫃頂後方", "tone": "target" }
+        ],
+        "caption": "步驟 13|牆面固定件 ×2(防傾倒必裝)"
+      }
+    },
+    {
+      "id": "s14",
+      "index": 14,
+      "title": "在牆上標記鑽孔位置",
+      "summary": "把櫃體推到最終位置,用鉛筆穿過固定件的圓孔在牆上做 2 個記號。",
+      "pages": [15, 20],
+      "actions": [
+        { "verb": "place", "text": "把櫃體推到最終擺放位置,確認貼緊牆面。" },
+        { "verb": "mark", "text": "鉛筆穿過 2 個固定件的大圓孔,在牆面上各畫一個記號。" }
+      ],
+      "partsUsed": [],
+      "toolsUsed": ["T-pencil"],
+      "orientation": "標記時櫃體要保持水平貼牆,建議先用水平儀確認。",
+      "cautions": ["標記後移開櫃體再鑽孔,避免粉塵掉入層格。"],
+      "commonMistakes": ["標記時櫃體沒放到最終位置,鑽完孔對不上。"],
+      "visual": {
+        "basePage": 15,
+        "focus": { "x": 0.05, "y": 0.05, "w": 0.9, "h": 0.6 },
+        "annotations": [
+          { "type": "zoom", "bbox": { "x": 0.3, "y": 0.13, "w": 0.28, "h": 0.19 }, "note": "鉛筆穿過固定件圓孔做記號" },
+          { "type": "highlight", "shape": "circle", "bbox": { "x": 0.44, "y": 0.36, "w": 0.24, "h": 0.05 }, "label": "固定件位置", "tone": "target" },
+          { "type": "marker", "at": { "x": 0.3, "y": 0.38 }, "label": "✎", "tone": "target" },
+          { "type": "marker", "at": { "x": 0.63, "y": 0.38 }, "label": "✎", "tone": "target" }
+        ],
+        "caption": "步驟 14|鉛筆標記牆面鑽孔點 ×2"
+      }
+    },
+    {
+      "id": "s15",
+      "index": 15,
+      "title": "鎖入牆用螺絲(自備)",
+      "summary": "在記號處鎖入 2 顆適合牆面材質的圓頭螺絲,螺絲頭留一小段不鎖到底。",
+      "pages": [16, 21],
+      "actions": [
+        { "verb": "drill", "text": "依牆面材質在記號處鑽孔、放入壁栓(水泥牆需震動電鑽,輕隔間用專用壁虎)。" },
+        { "verb": "screw", "text": "鎖入 2 顆「圓頭」螺絲,螺絲頭與牆面留約 3mm 縫隙,之後要掛金屬鎖片。" },
+        { "verb": "check", "text": "確認使用圓頭螺絲 — 平頭(沉頭)螺絲無法掛住鎖片,說明書特別打叉警告。" }
+      ],
+      "partsUsed": [],
+      "toolsUsed": ["T-wallanchor", "T-screwdriver"],
+      "orientation": "螺絲位置就是步驟 14 的鉛筆記號處。",
+      "cautions": ["牆用螺絲與壁栓不隨附!不確定牆面材質時,請洽五金行或專業人員。", "鑽孔前確認牆內無水電管線。"],
+      "commonMistakes": ["用了平頭螺絲或鎖到全平貼牆,金屬鎖片掛不上去。"],
+      "visual": {
+        "basePage": 16,
+        "focus": { "x": 0.05, "y": 0.2, "w": 0.9, "h": 0.55 },
+        "annotations": [
+          { "type": "compare", "correct": { "x": 0.13, "y": 0.42, "w": 0.1, "h": 0.07 }, "wrong": { "x": 0.24, "y": 0.42, "w": 0.1, "h": 0.07 }, "note": "要用圓頭螺絲,不可用平頭" },
+          { "type": "zoom", "bbox": { "x": 0.33, "y": 0.38, "w": 0.29, "h": 0.2 }, "note": "牆用螺絲 ×2(不隨附,依牆面選購)" },
+          { "type": "marker", "at": { "x": 0.27, "y": 0.33 }, "label": "1", "tone": "warning" },
+          { "type": "marker", "at": { "x": 0.53, "y": 0.32 }, "label": "2", "tone": "warning" }
+        ],
+        "caption": "步驟 15|鎖入 2 顆圓頭牆用螺絲(留縫)"
+      }
+    },
+    {
+      "id": "s16",
+      "index": 16,
+      "title": "掛上鎖片、調整、蓋上外蓋",
+      "summary": "把金屬鎖片掛上牆面螺絲,用螺絲起子微調位置後鎖緊,最後推上外蓋完成固定。",
+      "pages": [17, 22],
+      "actions": [
+        { "verb": "attach", "text": "把 2 片金屬鎖片 103693 的鑰匙孔套上牆面螺絲頭,往下掛住。" },
+        { "verb": "screw", "text": "用螺絲起子調整鎖片長孔位置(可上下左右微調),讓櫃體貼緊牆面後鎖緊。" },
+        { "verb": "slide", "text": "把外蓋 115754 沿箭頭方向推入固定件,蓋住五金。" },
+        { "verb": "check", "text": "輕拉櫃體頂端測試:應完全不動。大功告成!" }
+      ],
+      "partsUsed": [
+        { "partId": "F-103693", "quantity": 2 },
+        { "partId": "F-115754", "quantity": 2 }
+      ],
+      "toolsUsed": ["T-screwdriver"],
+      "orientation": "鎖片的鑰匙孔大端朝上套入,滑下卡緊;外蓋由前往後水平推入。",
+      "cautions": ["固定完成前不要在層格放重物或讓小孩攀爬。"],
+      "commonMistakes": ["鎖片還沒鎖緊就先蓋外蓋,之後鬆動要整個拆開重調。"],
+      "visual": {
+        "basePage": 17,
+        "focus": null,
+        "annotations": [
+          { "type": "highlight", "shape": "rect", "bbox": { "x": 0.06, "y": 0.28, "w": 0.5, "h": 0.5 }, "label": "已固定於牆面的櫃體", "tone": "part" },
+          { "type": "zoom", "bbox": { "x": 0.6, "y": 0.22, "w": 0.36, "h": 0.18 }, "note": "① 鎖片 103693 掛上螺絲" },
+          { "type": "zoom", "bbox": { "x": 0.6, "y": 0.42, "w": 0.36, "h": 0.18 }, "note": "② 螺絲起子微調後鎖緊" },
+          { "type": "zoom", "bbox": { "x": 0.6, "y": 0.62, "w": 0.36, "h": 0.18 }, "note": "③ 推上外蓋 115754" },
+          { "type": "arrow", "from": { "x": 0.9, "y": 0.72 }, "to": { "x": 0.78, "y": 0.75 }, "label": null, "tone": "move" }
+        ],
+        "caption": "步驟 16|三段收尾:掛鎖片 → 調整鎖緊 → 蓋外蓋"
+      }
+    }
+  ]
+}
