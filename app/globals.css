@@ -48,16 +48,18 @@ button {
 .topbar {
   background: #fff;
   color: var(--ink);
-  padding: 12px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 10;
 }
 .topbar .container {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 .logo-img {
-  height: 34px;
+  height: 38px;
   width: auto;
   display: block;
 }
