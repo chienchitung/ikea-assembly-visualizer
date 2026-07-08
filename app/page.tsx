@@ -4,30 +4,34 @@ import Uploader from "@/components/Uploader";
 export default function HomePage() {
   return (
     <main className="container">
-      <section className="hero">
-        <h1>把 IKEA 說明書變成互動式組裝指南</h1>
-        <p>
-          上傳任一 IKEA 組裝說明書(PDF / JPG / PNG),AI
-          會自動辨識零件、工具、警示與步驟,整理成一步一步、附重點標註與方向箭頭的指南。
-        </p>
-      </section>
+      <div className="home-grid">
+        <div className="home-main">
+          <section className="hero">
+            <h1>把 IKEA 說明書變成互動式組裝指南</h1>
+            <p>
+              上傳任一 IKEA 組裝說明書(PDF / JPG / PNG),AI
+              會自動辨識零件、工具、警示與步驟,整理成一步一步、附重點標註與方向箭頭的指南。
+            </p>
+          </section>
 
-      <Uploader />
-
-      <div className="demo-card">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className="thumb"
-          src="/api/guides/kallax/pages/1"
-          alt="KALLAX 說明書封面"
-        />
-        <div style={{ flex: 1 }}>
-          <h3>KALLAX 層架組(4×3)示範</h3>
-          <p>已解析完成的範例:16 個步驟、11 種零件、完整視覺化標註。</p>
+          <Uploader />
         </div>
-        <Link className="btn btn-primary" href="/guide/kallax">
-          開啟示範
-        </Link>
+
+        <aside className="demo-card side">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="thumb"
+            src="/api/guides/kallax/pages/1"
+            alt="KALLAX 說明書封面"
+          />
+          <div className="demo-info">
+            <h3>KALLAX 層架組(4×3)示範</h3>
+            <p>已解析完成的範例:16 個步驟、11 種零件、完整視覺化標註。</p>
+          </div>
+          <Link className="btn btn-primary" href="/guide/kallax">
+            開啟示範
+          </Link>
+        </aside>
       </div>
 
       <section className="picto-section">

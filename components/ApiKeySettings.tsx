@@ -15,9 +15,10 @@ export const GEMINI_KEY_STORAGE = "gemini-api-key";
 export const GEMINI_MODEL_STORAGE = "gemini-model";
 
 export const GEMINI_MODELS: { id: string; label: string }[] = [
-  { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash(快速,預設)" },
+  { id: "gemini-3.5-flash", label: "Gemini 3.5 Flash(最新正式版,預設)" },
+  { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash(上一代,成本低)" },
   { id: "gemini-2.5-pro", label: "Gemini 2.5 Pro(複雜文件較準確)" },
-  { id: "gemini-3-pro-preview", label: "Gemini 3 Pro(預覽版,最強)" },
+  { id: "gemini-3-pro-preview", label: "Gemini 3 Pro(預覽版)" },
 ];
 
 export default function ApiKeySettings() {

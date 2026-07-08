@@ -14,12 +14,13 @@ import { SYSTEM_PROMPT, buildUserText, type ParseInput } from "./parser";
  * - 金鑰以 x-goog-api-key header 傳遞(不放在 URL,避免進到日誌)。
  *
  * 建議模型(依 Google 文件,皆支援 PDF 視覺與結構化輸出):
- * - gemini-2.5-flash:速度快、成本低,預設值
- * - gemini-2.5-pro:複雜文件理解最穩定的正式版
- * - gemini-3-pro-preview:最新一代,能力最強(預覽版,依帳號開放情況)
+ * - gemini-3.5-flash:最新一代 Flash 正式版(GA),文件理解與速度兼具,預設值
+ * - gemini-2.5-flash:上一代穩定版,成本更低
+ * - gemini-2.5-pro:複雜文件理解穩定的正式版
+ * - gemini-3-pro-preview:Gemini 3 Pro(預覽版,依帳號開放情況)
  */
 
-const DEFAULT_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+const DEFAULT_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.5-flash";
 const INLINE_PDF_LIMIT = 14 * 1024 * 1024;
 
 interface GeminiOptions {

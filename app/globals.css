@@ -238,8 +238,24 @@ button {
 }
 
 /* ---------- 首頁 ---------- */
+/* 雙欄格局:左欄是標題+上傳區(閱讀寬度),右欄放示範卡片,
+   讓寬螢幕下不再留一大片空白 */
+.home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(300px, 4fr);
+  gap: 48px;
+  align-items: start;
+  padding: 64px 0 56px;
+}
+@media (max-width: 960px) {
+  .home-grid {
+    grid-template-columns: 1fr;
+    padding: 40px 0 48px;
+  }
+}
+
 .hero {
-  padding: 64px 0 8px;
+  padding: 0 0 8px;
   max-width: 760px;
 }
 .hero h1 {
@@ -256,7 +272,7 @@ button {
 }
 
 .upload-zone {
-  margin: 36px 0;
+  margin: 36px 0 0;
   max-width: 760px;
   background: #fff;
   border: 2px dashed var(--line);
@@ -300,7 +316,7 @@ button {
 
 .pipeline-status {
   max-width: 760px;
-  margin: 36px 0;
+  margin: 36px 0 0;
   border: 1px solid var(--line);
   border-radius: 4px;
   padding: 32px;
@@ -373,6 +389,31 @@ button {
   margin: 0;
   color: var(--text-2);
   font-size: 13.5px;
+}
+
+/* 首頁右欄的直立示範卡片 */
+.demo-card.side {
+  flex-direction: column;
+  align-items: stretch;
+  max-width: none;
+  margin: 0;
+  padding: 20px;
+  gap: 14px;
+}
+.demo-card.side .thumb {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+  background: var(--bg-subtle);
+  border-radius: 4px;
+}
+.demo-card.side .btn {
+  align-self: flex-start;
+}
+@media (max-width: 960px) {
+  .demo-card.side {
+    margin-top: 32px;
+  }
 }
 
 /* 組裝前須知:直接使用 IKEA 說明書小人物插圖 */
