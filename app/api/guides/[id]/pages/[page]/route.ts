@@ -6,8 +6,8 @@ export const runtime = "nodejs";
 
 /**
  * 提供說明書某一頁的圖片。
- * - demo 與 Vercel Blob 模式:轉址到靜態網址 / Blob 公開網址。
- * - 本機檔案系統模式:直接讀取 bytes 回傳。
+ * - demo 與 Vercel Blob 模式：轉址到靜態網址 / Blob 公開網址。
+ * - 本機檔案系統模式：直接讀取 bytes 回傳。
  */
 export async function GET(
   _req: Request,

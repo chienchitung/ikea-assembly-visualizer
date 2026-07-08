@@ -9,8 +9,8 @@ export default function HomePage() {
           <section className="hero">
             <h1>把 IKEA 說明書變成互動式組裝指南</h1>
             <p>
-              上傳任一 IKEA 組裝說明書(PDF / JPG / PNG),AI
-              會自動辨識零件、工具、警示與步驟,整理成一步一步、附重點標註與方向箭頭的指南。
+              上傳任一 IKEA 組裝說明書（PDF / JPG / PNG），AI
+              會自動辨識零件、工具、警示與步驟，整理成一步一步、附重點標註與方向箭頭的指南。
             </p>
           </section>
 
@@ -25,8 +25,8 @@ export default function HomePage() {
             alt="KALLAX 說明書封面"
           />
           <div className="demo-info">
-            <h3>KALLAX 層架組(4×3)示範</h3>
-            <p>已解析完成的範例:16 個步驟、11 種零件、完整視覺化標註。</p>
+            <h3>KALLAX 層架組（4×3）示範</h3>
+            <p>已解析完成的範例：16 個步驟、11 種零件、完整視覺化標註。</p>
           </div>
           <Link className="btn btn-primary" href="/guide/kallax">
             開啟示範
@@ -35,15 +35,15 @@ export default function HomePage() {
       </div>
 
       <section className="picto-section">
-        <h2>組裝前,先看看這些</h2>
-        <p className="sub">出自 IKEA 原廠說明書的提醒(以 KALLAX 為例)</p>
+        <h2>組裝前，先看看這些</h2>
+        <p className="sub">出自 IKEA 原廠說明書的提醒（以 KALLAX 為例）</p>
         <div className="picto-grid">
           <div className="picto-card">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/pictograms/two-people.png" alt="請兩人一起組裝" />
             <div className="cap">
               <b>請兩人一起組裝</b>
-              <span>板件大而重,一個人容易受傷或損壞板件。</span>
+              <span>板件大而重，一個人容易受傷或損壞板件。</span>
             </div>
           </div>
           <div className="picto-card">
@@ -66,8 +66,8 @@ export default function HomePage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/pictograms/question.png" alt="有疑問時" />
             <div className="cap">
-              <b>卡關了?</b>
-              <span>對照原始說明書頁面,或聯絡當地 IKEA 客服。</span>
+              <b>卡關了？</b>
+              <span>對照原始說明書頁面，或聯絡當地 IKEA 客服。</span>
             </div>
           </div>
         </div>

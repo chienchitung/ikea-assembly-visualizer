@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Annotation, VisualSpec } from "@/lib/schema";
 
-// IKEA 色卡用色(與品牌延伸色一致):藍=零件、橘=五金、綠=目標位置、紅=警示、粉=旋轉
+// IKEA 色卡用色（與品牌延伸色一致）：藍=零件、橘=五金、綠=目標位置、紅=警示、粉=旋轉
 const TONE_COLOR: Record<string, string> = {
   part: "#0058a3",
   hardware: "#f26a1b",
@@ -16,7 +16,7 @@ const TONE_COLOR: Record<string, string> = {
 interface Props {
   guideId: string;
   visual: VisualSpec;
-  /** 顯示整頁(true)或聚焦裁切(false) */
+  /** 顯示整頁（true）或聚焦裁切（false） */
   fullPage: boolean;
   /** 每次遞增就重播標註動畫 */
   replayKey: number;
@@ -25,9 +25,9 @@ interface Props {
 }
 
 /**
- * 步驟畫布:以說明書頁面圖為底,依 VisualSpec 疊加 SVG 標註
- * (高亮 / 箭頭 / 位置標記 / 放大提示 / 對錯比較)。
- * 座標系:x 以 0~1000 表示頁寬,y 依圖片實際長寬比換算。
+ * 步驟畫布：以說明書頁面圖為底，依 VisualSpec 疊加 SVG 標註
+ * （高亮 / 箭頭 / 位置標記 / 放大提示 / 對錯比較）。
+ * 座標系：x 以 0~1000 表示頁寬，y 依圖片實際長寬比換算。
  */
 export default function StepCanvas({
   guideId,
@@ -64,7 +64,7 @@ export default function StepCanvas({
     return `${x} ${y} ${w} ${h}`;
   }, [fullPage, visual.focus, W, H]);
 
-  // 依可視範圍縮放標註尺寸,讓線寬/字級在裁切與整頁模式下視覺一致
+  // 依可視範圍縮放標註尺寸，讓線寬/字級在裁切與整頁模式下視覺一致
   const vbW = Number(viewBox.split(" ")[2]);
   const u = vbW / 100;
 
@@ -155,7 +155,7 @@ function AnnotationEl({
       const y1 = ny(ann.from.y);
       const x2 = nx(ann.to.x);
       const y2 = ny(ann.to.y);
-      // 箭頭頭部:沿線方向的小三角形
+      // 箭頭頭部：沿線方向的小三角形
       const angle = Math.atan2(y2 - y1, x2 - x1);
       const headLen = 2.4 * u;
       const hx1 = x2 - headLen * Math.cos(angle - 0.45);
@@ -309,7 +309,7 @@ function CompareBox({
   );
 }
 
-/** 帶底色的文字標籤(CJK 以每字 1em 估寬) */
+/** 帶底色的文字標籤（CJK 以每字 1em 估寬） */
 function LabelPill({
   x,
   y,

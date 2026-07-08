@@ -59,15 +59,15 @@ export default function GuideViewer({ id }: { id: string }) {
     void (async () => {
       const res = await fetch(`/api/guides/${id}`);
       if (!res.ok) {
-        setError("找不到這份指南,請重新上傳說明書。");
+        setError("找不到這份指南，請重新上傳說明書。");
         return;
       }
       const data = await res.json();
       if (data.job.status !== "ready" || !data.guide) {
         setError(
           data.job.status === "error"
-            ? `解析失敗:${data.job.error ?? "未知錯誤"}`
-            : "這份說明書還在解析中,請稍後再試。"
+            ? `解析失敗：${data.job.error ?? "未知錯誤"}`
+            : "這份說明書還在解析中，請稍後再試。"
         );
         return;
       }
@@ -118,12 +118,12 @@ export default function GuideViewer({ id }: { id: string }) {
         </div>
       </div>
 
-      {/* 步驟號碼列(對應說明書上的大數字) */}
+      {/* 步驟號碼列（對應說明書上的大數字） */}
       <div className="step-strip" role="tablist" aria-label="組裝步驟">
         {steps.map((s, i) => (
           <button
             key={s.id}
-            title={`步驟 ${s.index}:${s.title}`}
+            title={`步驟 ${s.index}：${s.title}`}
             className={
               "step-dot" +
               (i === stepIdx ? " current" : "") +
@@ -137,11 +137,11 @@ export default function GuideViewer({ id }: { id: string }) {
       </div>
 
       <div className="viewer">
-        {/* 左:視覺化畫布 */}
+        {/* 左：視覺化畫布 */}
         <div className="panel">
           <div className="canvas-toolbar">
             <span className="step-label">
-              步驟 {step.index}:{step.title}
+              步驟 {step.index}：{step.title}
             </span>
             <button
               className={"icon-btn" + (showAnn ? " on" : "")}
@@ -200,7 +200,7 @@ export default function GuideViewer({ id }: { id: string }) {
             </span>
             {stepIdx < steps.length - 1 ? (
               <button className="btn btn-primary" onClick={markDoneAndNext}>
-                完成,下一步 <IconChevronRight size={16} />
+                下一步 <IconChevronRight size={16} />
               </button>
             ) : (
               <button
@@ -213,7 +213,7 @@ export default function GuideViewer({ id }: { id: string }) {
           </div>
         </div>
 
-        {/* 右:詳細資訊 */}
+        {/* 右：詳細資訊 */}
         <div className="panel">
           <div className="tabs">
             <button className={tab === "detail" ? "on" : ""} onClick={() => setTab("detail")}>
@@ -265,7 +265,7 @@ export default function GuideViewer({ id }: { id: string }) {
               {/* IKEA 原廠說明書的防傾倒警告插圖 */}
               <div className="warning-illustration">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/pictograms/anchor-warning.png" alt="固定前貼牆直立,禁止傾斜攀爬" />
+                <img src="/pictograms/anchor-warning.png" alt="固定前貼牆直立，禁止傾斜攀爬" />
               </div>
               {guide.warnings.map((w) => (
                 <div key={w.id} className={`warning-card ${w.severity}`}>
@@ -342,7 +342,7 @@ function StepDetail({
   return (
     <div className="detail-body">
       <h3>
-        步驟 {step.index}:{step.title}
+        步驟 {step.index}：{step.title}
       </h3>
       <div className="summary">{step.summary}</div>
 

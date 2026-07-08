@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { GuideJobStatus } from "@/lib/schema";
-import { GEMINI_KEY_STORAGE, GEMINI_MODEL_STORAGE } from "./ApiKeySettings";
+import { GEMINI_KEY_STORAGE } from "./ApiKeySettings";
 import { IconUpload } from "./icons";
 
 const STAGES: { key: GuideJobStatus; label: string }[] = [
@@ -25,14 +25,10 @@ export default function Uploader() {
     setError(null);
     const fd = new FormData();
     fd.append("file", file);
-    // 右上角設定的 Gemini 金鑰:僅存於瀏覽器,只隨本次請求送出使用
+    // 右上角設定的 Gemini 金鑰：僅存於瀏覽器，只隨本次請求送出使用
     const headers: Record<string, string> = {};
     const geminiKey = localStorage.getItem(GEMINI_KEY_STORAGE);
-    if (geminiKey) {
-      headers["x-gemini-api-key"] = geminiKey;
-      const model = localStorage.getItem(GEMINI_MODEL_STORAGE);
-      if (model) headers["x-gemini-model"] = model;
-    }
+    if (geminiKey) headers["x-gemini-api-key"] = geminiKey;
     const res = await fetch("/api/guides", { method: "POST", body: fd, headers });
     const data = await res.json();
     if (!res.ok) {
@@ -69,7 +65,7 @@ export default function Uploader() {
     return (
       <div className="pipeline-status">
         <h3>正在生成你的組裝指南…</h3>
-        <p>AI 正在閱讀每一頁,辨識零件、箭頭與步驟,通常需要 1–3 分鐘。</p>
+        <p>AI 正在閱讀每一頁，辨識零件、箭頭與步驟，通常需要 1–3 分鐘。</p>
         <div className="pipeline-steps">
           {STAGES.map((s, i) => (
             <span
@@ -107,7 +103,7 @@ export default function Uploader() {
         <IconUpload size={26} />
       </span>
       <h3>拖放或點擊上傳 IKEA 組裝說明書</h3>
-      <p>支援 PDF、JPG、PNG。先到右上角「API 金鑰」設定 Gemini 金鑰(僅存於你的瀏覽器)</p>
+      <p>支援 PDF、JPG、PNG。先到右上角「API 金鑰」設定 Gemini 金鑰（僅存於你的瀏覽器）</p>
       {error && <div className="upload-error">{error}</div>}
       <input
         ref={inputRef}

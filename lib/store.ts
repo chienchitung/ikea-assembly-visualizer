@@ -7,16 +7,16 @@ import { getDemoGuide, isDemoId } from "./demoGuides";
 export { isDemoId };
 
 /**
- * 儲存層,支援兩種後端:
+ * 儲存層，支援兩種後端：
  *
- * 1. **本機檔案系統**(預設,`npm run dev` / 自架伺服器):維持原本行為,
+ * 1. **本機檔案系統**（預設，`npm run dev` / 自架伺服器）：維持原本行為，
  *    寫入 `.data/guides/<id>/`。
- * 2. **Vercel Blob**(設定 `BLOB_READ_WRITE_TOKEN` 後自動啟用):寫入
+ * 2. **Vercel Blob**（設定 `BLOB_READ_WRITE_TOKEN` 後自動啟用）：寫入
  *    Vercel Blob 物件儲存。Vercel 的 serverless function 檔案系統唯讀
- *    (僅 /tmp 可寫,且不保證跨呼叫延續),本機檔案系統在正式站上完全不能用,
+ *    （僅 /tmp 可寫，且不保證跨呼叫延續），本機檔案系統在正式站上完全不能用，
  *    必須改用外部物件儲存。
  *
- * 內建示範指南(kallax 等)不經過這層 —— 見 lib/demoGuides.ts。
+ * 內建示範指南（kallax 等）不經過這層 —— 見 lib/demoGuides.ts。
  */
 
 const USE_BLOB = !!process.env.BLOB_READ_WRITE_TOKEN;
@@ -38,7 +38,7 @@ function pad(page: number): string {
 
 // ---------- Blob 輔助函式 ----------
 
-/** 依 pathname 精確查找 blob 網址(list 以 prefix 比對,需再篩選完全相符者)。 */
+/** 依 pathname 精確查找 blob 網址（list 以 prefix 比對，需再篩選完全相符者）。 */
 async function findBlobUrl(pathname: string): Promise<string | null> {
   const { blobs } = await list({ prefix: pathname, limit: 10 });
   return blobs.find((b) => b.pathname === pathname)?.url ?? null;
@@ -61,7 +61,7 @@ async function writeBlobJson(pathname: string, data: unknown): Promise<void> {
   });
 }
 
-// ---------- 工作(Job)----------
+// ---------- 工作（Job）----------
 
 export async function createJob(job: GuideJob): Promise<void> {
   if (!USE_BLOB) fs.mkdirSync(path.join(jobDir(job.id), "pages"), { recursive: true });
@@ -95,7 +95,7 @@ export async function readJob(id: string): Promise<GuideJob | null> {
   return JSON.parse(fs.readFileSync(p, "utf8")) as GuideJob;
 }
 
-// ---------- 指南(Guide)----------
+// ---------- 指南（Guide）----------
 
 export async function writeGuide(id: string, guide: AssemblyGuide): Promise<void> {
   if (USE_BLOB) {
@@ -117,7 +117,7 @@ export async function readGuide(id: string): Promise<AssemblyGuide | null> {
 
 // ---------- 頁面圖片 ----------
 
-/** 儲存一張已轉換的頁面圖(rasterize 產生的 JPEG bytes)。回傳 Blob 模式下的公開網址。 */
+/** 儲存一張已轉換的頁面圖（rasterize 產生的 JPEG bytes）。回傳 Blob 模式下的公開網址。 */
 export async function savePageImage(
   id: string,
   page: number,
@@ -142,15 +142,15 @@ export type PageImageSource =
   | { kind: "file"; path: string }
   | { kind: "redirect"; url: string };
 
-/** 提供給 API 路由使用:回傳本機檔案路徑(可讀 bytes)或應直接轉址的網址。 */
+/** 提供給 API 路由使用：回傳本機檔案路徑（可讀 bytes）或應直接轉址的網址。 */
 export async function getPageImageSource(
   id: string,
   page: number
 ): Promise<PageImageSource | null> {
   assertSafeId(id);
   if (isDemoId(id)) {
-    // demo 頁面圖是 public/ 下的靜態檔案,交給 Next.js 的靜態資源服務處理,
-    // 不透過本 function 讀取檔案系統(見 lib/demoGuides.ts 開頭說明)。
+    // demo 頁面圖是 public/ 下的靜態檔案，交給 Next.js 的靜態資源服務處理，
+    // 不透過本 function 讀取檔案系統（見 lib/demoGuides.ts 開頭說明）。
     return { kind: "redirect", url: `/demo/${id}/pages/page-${pad(page)}.jpg` };
   }
   if (USE_BLOB) {
