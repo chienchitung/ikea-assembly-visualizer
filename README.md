@@ -13,12 +13,34 @@ npm install
 npm run dev          # http://localhost:3000 → 點「開啟示範指南」
 ```
 
-要啟用「上傳任一說明書」的自動解析,需要:
+要啟用「上傳任一說明書」的自動解析,三種方式擇一:
 
-1. `export ANTHROPIC_API_KEY=sk-ant-...`(解析引擎使用 Claude 視覺模型)
+1. **使用者自帶 Gemini 金鑰(免伺服器設定)**:點右上角「API 金鑰」輸入
+   Google Gemini API 金鑰 —— 金鑰只存在該使用者瀏覽器的 localStorage,
+   伺服器不保存,解析時才隨該次請求送出使用。金鑰可在
+   [Google AI Studio](https://aistudio.google.com/apikey) 免費取得。
+2. 伺服器設定 `GEMINI_API_KEY`(全站共用 Gemini)。
+3. 伺服器設定 `ANTHROPIC_API_KEY`(全站共用 Claude)。
 
-就這樣。PDF 轉頁面圖是純 JS 實作(`pdfjs-dist` + `@napi-rs/canvas`),
+優先順序:瀏覽器金鑰 > `GEMINI_API_KEY` > `ANTHROPIC_API_KEY`。
+PDF 轉頁面圖是純 JS 實作(`pdfjs-dist` + `@napi-rs/canvas`),
 不需要另外安裝 poppler-utils / pdftoppm。
+
+### Gemini 模型選擇
+
+三個模型皆支援 PDF 文件視覺理解與 JSON 結構化輸出,可在右上角面板切換:
+
+| 模型 | 適用情境 |
+|---|---|
+| `gemini-2.5-flash`(預設) | 速度快、成本低,一般說明書足夠 |
+| `gemini-2.5-pro` | 複雜/頁數多的說明書,理解最穩定的正式版 |
+| `gemini-3-pro-preview` | 最新一代、能力最強(預覽版,依帳號開放情況) |
+
+實作上使用 Gemini REST API 的 `responseJsonSchema` 結構化輸出,
+schema 由 zod(`lib/schema.ts`)以 `z.toJSONSchema()` 產生,與 Claude
+路徑共用同一份定義;不支援該欄位的舊模型會自動降級為純 JSON 模式,
+最後一律再以 zod 驗證。注意:Gemini 以 inline 方式送整份 PDF,單一請求
+上限約 20MB(base64 後),因此走 Gemini 時原始 PDF 限制約 14MB。
 
 ## 系統架構
 
@@ -111,7 +133,9 @@ npm run dev          # http://localhost:3000 → 點「開啟示範指南」
 
 | 變數 | 預設 | 說明 |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | — | 解析引擎必填(示範指南不需要) |
+| `GEMINI_API_KEY` | — | 伺服器端 Gemini 金鑰(使用者瀏覽器金鑰優先於此) |
+| `GEMINI_MODEL` | `gemini-2.5-flash` | 伺服器端 Gemini 預設模型 |
+| `ANTHROPIC_API_KEY` | — | 伺服器端 Claude 金鑰(無任何 Gemini 金鑰時使用) |
 | `PARSER_MODEL` | `claude-opus-4-8` | 解析使用的 Claude 模型 |
 | `BLOB_READ_WRITE_TOKEN` | — | 設定後自動改用 Vercel Blob 儲存(見下方部署章節);本機開發不需要 |
 

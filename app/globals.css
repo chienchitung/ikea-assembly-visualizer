@@ -79,11 +79,101 @@ button {
   font-size: 16px;
   color: var(--text);
 }
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 .topbar a.home-link {
   color: var(--blue);
-  margin-left: auto;
   font-size: 14px;
   font-weight: 500;
+}
+
+/* ---------- API 金鑰設定(右上角) ---------- */
+.apikey-wrap {
+  position: relative;
+}
+.apikey-btn {
+  padding: 8px 18px;
+  font-size: 13.5px;
+  position: relative;
+}
+.key-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--positive);
+  display: inline-block;
+}
+.apikey-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 340px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  padding: 18px;
+  z-index: 80;
+}
+.apikey-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.apikey-panel select,
+.apikey-input-row input {
+  width: 100%;
+  border: 1px solid var(--text-3);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--text);
+}
+.apikey-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.apikey-input-row input:focus,
+.apikey-panel select:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 0;
+  border-color: var(--blue);
+}
+.reveal-btn {
+  flex: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 4px;
+  padding: 0 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: var(--text-2);
+}
+.apikey-panel select {
+  margin-bottom: 4px;
+}
+.apikey-note {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+  margin: 10px 0 14px;
+}
+.apikey-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.apikey-actions .btn {
+  padding: 9px 20px;
+  font-size: 13.5px;
 }
 
 /* ---------- 按鈕(IKEA 膠囊型) ---------- */

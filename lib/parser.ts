@@ -4,7 +4,8 @@ import { AssemblyGuide } from "./schema";
 
 const MODEL = process.env.PARSER_MODEL ?? "claude-opus-4-8";
 
-const SYSTEM_PROMPT = `你是「IKEA 組裝說明書視覺化系統」的解析引擎。輸入是一份 IKEA 家具組裝說明書(整份 PDF 或掃描圖片),你要輸出一份結構化的互動式組裝指南 JSON。
+/** 解析提示詞(Claude / Gemini 兩個引擎共用) */
+export const SYSTEM_PROMPT = `你是「IKEA 組裝說明書視覺化系統」的解析引擎。輸入是一份 IKEA 家具組裝說明書(整份 PDF 或掃描圖片),你要輸出一份結構化的互動式組裝指南 JSON。
 
 解析原則:
 1. **辨識產品**:封面的家具名稱(如 KALLAX)、頁尾的文件編號(如 AA-2051412-6)、家具類型與構造(幾格層架、桌、櫃等)。
@@ -36,6 +37,11 @@ export interface ParseInput {
   pageCount: number;
 }
 
+/** 使用者訊息文字(兩個引擎共用) */
+export function buildUserText(input: ParseInput): string {
+  return `這份說明書共 ${input.pageCount} 頁。請完整解析並輸出結構化組裝指南 JSON(source.fileType="${input.fileType}"、source.pageCount=${input.pageCount})。`;
+}
+
 /**
  * 呼叫 Claude 將說明書解析為 AssemblyGuide。
  * - PDF:直接以 document block 送整份 PDF(保留頁碼資訊)。
@@ -61,10 +67,7 @@ export async function parseManual(input: ParseInput): Promise<AssemblyGuide> {
       });
     }
   }
-  content.push({
-    type: "text",
-    text: `這份說明書共 ${input.pageCount} 頁。請完整解析並輸出結構化組裝指南 JSON(source.fileType="${input.fileType}"、source.pageCount=${input.pageCount})。`,
-  });
+  content.push({ type: "text", text: buildUserText(input) });
 
   const stream = client.messages.stream({
     model: MODEL,

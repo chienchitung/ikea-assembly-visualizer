@@ -155,6 +155,13 @@ export const IconClose = (p: P) => (
   </Base>
 );
 
+export const IconKey = (p: P) => (
+  <Base {...p}>
+    <circle cx="7.5" cy="14.5" r="4.5" />
+    <path d="M10.8 11.2 L20 2 M16 6 L19 9 M13 9 L15.5 11.5" />
+  </Base>
+);
+
 export const IconList = (p: P) => (
   <Base {...p}>
     <path d="M9 5.5 H21 M9 12 H21 M9 18.5 H21" />
