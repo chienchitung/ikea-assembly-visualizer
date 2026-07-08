@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AssemblyGuide, Part, Step } from "@/lib/schema";
+import { getLocalGuide } from "@/lib/localGuides";
 import StepCanvas from "./StepCanvas";
 import {
   IconCheck,
@@ -54,26 +55,52 @@ export default function GuideViewer({ id }: { id: string }) {
   const [replayKey, setReplayKey] = useState(0);
   const [originalOpen, setOriginalOpen] = useState(false);
   const [originalPage, setOriginalPage] = useState(1);
+  /** 本機指南的頁面圖 object URL（1-based 對應 index+1）；null = 使用伺服器 API（示範指南） */
+  const [pageUrls, setPageUrls] = useState<string[] | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+    let urls: string[] = [];
     void (async () => {
-      const res = await fetch(`/api/guides/${id}`);
-      if (!res.ok) {
-        setError("找不到這份指南，請重新上傳說明書。");
+      // 1. 先找瀏覽器本機的指南（使用者上傳解析的結果存在 IndexedDB）
+      try {
+        const local = await getLocalGuide(id);
+        if (local) {
+          if (cancelled) return;
+          urls = local.pages.map((b) => URL.createObjectURL(b));
+          setPageUrls(urls);
+          setGuide(local.guide);
+          return;
+        }
+      } catch {
+        /* IndexedDB 不可用時退回伺服器 */
+      }
+      // 2. 伺服器內建的示範指南（如 kallax）
+      const res = await fetch(`/api/guides/${id}`).catch(() => null);
+      if (cancelled) return;
+      if (!res || !res.ok) {
+        setError("找不到這份指南。指南只保存在解析它的瀏覽器中，請重新上傳說明書。");
         return;
       }
       const data = await res.json();
       if (data.job.status !== "ready" || !data.guide) {
-        setError(
-          data.job.status === "error"
-            ? `解析失敗：${data.job.error ?? "未知錯誤"}`
-            : "這份說明書還在解析中，請稍後再試。"
-        );
+        setError("找不到這份指南，請重新上傳說明書。");
         return;
       }
       setGuide(data.guide as AssemblyGuide);
     })();
+    return () => {
+      cancelled = true;
+      urls.forEach((u) => URL.revokeObjectURL(u));
+    };
   }, [id]);
+
+  /** 取得某一頁（1-based）的圖片網址：本機 object URL 或示範指南 API */
+  const pageSrc = useCallback(
+    (page: number) =>
+      pageUrls ? pageUrls[page - 1] ?? "" : `/api/guides/${id}/pages/${page}`,
+    [pageUrls, id]
+  );
 
   const partById = useMemo(() => {
     const m = new Map<string, Part>();
@@ -177,7 +204,7 @@ export default function GuideViewer({ id }: { id: string }) {
           </div>
 
           <StepCanvas
-            guideId={id}
+            pageSrc={pageSrc}
             visual={step.visual}
             fullPage={fullPage}
             replayKey={replayKey}
@@ -304,7 +331,7 @@ export default function GuideViewer({ id }: { id: string }) {
             </div>
             <div className="modal-body">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/api/guides/${id}/pages/${originalPage}`} alt={`第 ${originalPage} 頁`} />
+              <img src={pageSrc(originalPage)} alt={`第 ${originalPage} 頁`} />
             </div>
             <div className="modal-nav">
               <button

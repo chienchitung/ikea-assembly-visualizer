@@ -18,8 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="topbar">
           <div className="container">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="logo-img" src="/ikea-logo.svg" alt="IKEA" />
+            <Link className="logo-link" href="/" aria-label="回首頁">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="logo-img" src="/ikea-logo.svg" alt="IKEA" />
+            </Link>
             <span className="topbar-title">組裝說明書視覺化指南</span>
             <span className="topbar-right">
               <ApiKeySettings />

@@ -69,6 +69,15 @@ button {
   align-items: center;
   gap: 16px;
 }
+.logo-link {
+  display: inline-flex;
+  flex: none;
+  border-radius: 4px;
+}
+.logo-link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
 .logo-img {
   height: 36px;
   width: auto;
@@ -78,17 +87,45 @@ button {
   font-weight: 700;
   font-size: 16px;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .topbar-right {
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: none;
 }
 .topbar a.home-link {
   color: var(--blue);
   font-size: 14px;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 窄螢幕：logo 本身可回首頁，收起文字連結與標題，按鈕縮小 */
+@media (max-width: 720px) {
+  .topbar .container {
+    gap: 12px;
+  }
+  .topbar-title {
+    display: none;
+  }
+  .topbar a.home-link {
+    display: none;
+  }
+  .topbar-right {
+    gap: 10px;
+  }
+  .logo-img {
+    height: 30px;
+  }
+  .apikey-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
 }
 
 /* ---------- API 金鑰設定（右上角） ---------- */
@@ -112,12 +149,24 @@ button {
   right: 0;
   top: calc(100% + 10px);
   width: 340px;
+  max-width: calc(100vw - 32px);
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 4px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
   padding: 18px;
   z-index: 80;
+}
+/* 窄螢幕：面板改固定在視窗內，不會超出畫面 */
+@media (max-width: 480px) {
+  .apikey-panel {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    top: 64px;
+    width: auto;
+    max-width: none;
+  }
 }
 .apikey-label {
   display: block;

@@ -1,130 +1,114 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { GuideJobStatus } from "@/lib/schema";
 import { GEMINI_KEY_STORAGE } from "./ApiKeySettings";
 import { IconUpload } from "./icons";
+import { pdfToPageBlobs } from "@/lib/pdfToImages";
+import { MAX_INLINE_BYTES, parseManualWithGemini } from "@/lib/geminiParse";
+import { saveLocalGuide } from "@/lib/localGuides";
 
-/** 前端顯示的階段：uploading 是「檔案還在傳送中」，其餘對應後端工作狀態 */
-type UploadPhase = GuideJobStatus | "uploading";
+/**
+ * 上傳與解析全部在瀏覽器內完成：
+ * 讀取檔案 → pdfjs 轉頁面圖 → 以使用者的金鑰直接呼叫 Gemini →
+ * 結果存入 IndexedDB → 導向指南頁。
+ * 不經過本站伺服器，部署環境不需要金鑰或儲存空間設定，
+ * 也不受平台的請求大小限制（如 Vercel 的 4.5MB）。
+ */
 
-const STAGES: { keys: UploadPhase[]; label: string }[] = [
-  { keys: ["uploading", "uploaded"], label: "上傳檔案" },
-  { keys: ["rendering"], label: "轉換頁面" },
-  { keys: ["parsing"], label: "AI 解析說明書" },
-  { keys: ["ready"], label: "生成指南" },
+type Phase = "reading" | "rendering" | "parsing" | "saving";
+
+const STAGES: { key: Phase; label: string }[] = [
+  { key: "reading", label: "讀取檔案" },
+  { key: "rendering", label: "轉換頁面" },
+  { key: "parsing", label: "AI 解析說明書" },
+  { key: "saving", label: "生成指南" },
 ];
 
-/** 回應不是 JSON 時（平台層 413/500 等），依 HTTP 狀態給出可行動的訊息 */
-function httpErrorMessage(status: number): string {
-  if (status === 413) {
-    return "檔案過大：超過伺服器單次請求上限（Vercel 平台約 4.5MB）。請壓縮 PDF 或改上傳單頁圖片。";
-  }
-  if (status >= 500) {
-    return `伺服器錯誤（${status}）：可能是部署環境尚未設定儲存空間（Vercel 需設定 BLOB_READ_WRITE_TOKEN）。`;
-  }
-  return `上傳失敗（HTTP ${status}），請稍後再試。`;
-}
+const ACCEPTED = ["application/pdf", "image/jpeg", "image/png"];
 
-/** 輪詢連續失敗達此次數（約 30 秒）即放棄並顯示錯誤 */
-const MAX_POLL_FAILURES = 12;
+async function blobToBase64(blob: Blob): Promise<string> {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
 
 export default function Uploader() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [jobId, setJobId] = useState<string | null>(null);
-  const [status, setStatus] = useState<UploadPhase | null>(null);
+  const [status, setStatus] = useState<Phase | null>(null);
 
-  const upload = useCallback(async (file: File) => {
-    setError(null);
-    setStatus("uploading"); // 立即顯示狀態列，大檔案傳送中也有回饋
-    const fd = new FormData();
-    fd.append("file", file);
-    // 右上角設定的 Gemini 金鑰：僅存於瀏覽器，只隨本次請求送出使用
-    const headers: Record<string, string> = {};
-    const geminiKey = localStorage.getItem(GEMINI_KEY_STORAGE);
-    if (geminiKey) headers["x-gemini-api-key"] = geminiKey;
+  const upload = useCallback(
+    async (file: File) => {
+      setError(null);
 
-    try {
-      const res = await fetch("/api/guides", { method: "POST", body: fd, headers });
-      // 平台層錯誤（413/500 等）的回應可能不是 JSON，安全解析避免整個流程靜默中止
-      let data: { id?: string; error?: string } | null = null;
-      try {
-        data = await res.json();
-      } catch {
-        /* 非 JSON 回應 */
-      }
-      if (!res.ok || !data?.id) {
-        setStatus(null);
-        setError(data?.error ?? httpErrorMessage(res.status));
+      const apiKey = localStorage.getItem(GEMINI_KEY_STORAGE)?.trim();
+      if (!apiKey) {
+        setError("請先點右上角「API 金鑰」設定 Google Gemini 金鑰（僅存於你的瀏覽器）。");
         return;
       }
-      setJobId(data.id);
-      setStatus("uploaded");
-    } catch {
-      setStatus(null);
-      setError("上傳失敗：無法連線到伺服器，請確認網路後再試。");
-    }
-  }, []);
-
-  // 輪詢解析狀態
-  useEffect(() => {
-    if (!jobId) return;
-    let failures = 0;
-    const stop = (msg?: string) => {
-      clearInterval(timer);
-      if (msg) {
-        setError(msg);
-        setStatus(null);
-        setJobId(null);
+      if (!ACCEPTED.includes(file.type)) {
+        setError("僅支援 PDF、JPG、PNG 格式。");
+        return;
       }
-    };
-    const timer = setInterval(async () => {
+      if (file.size > MAX_INLINE_BYTES) {
+        setError("檔案過大：Gemini 單次請求上限約 14MB，請壓縮檔案後再試。");
+        return;
+      }
+
+      const isPdf = file.type === "application/pdf";
+      setStatus("reading");
       try {
-        const res = await fetch(`/api/guides/${jobId}`);
-        if (!res.ok) {
-          // 連續查不到狀態就放棄，不再無聲空轉
-          if (++failures >= MAX_POLL_FAILURES) {
-            stop(
-              res.status === 404
-                ? "查不到這筆解析工作：部署環境可能沒有共用儲存（Vercel 需設定 BLOB_READ_WRITE_TOKEN），工作狀態在請求之間遺失了。"
-                : `查詢解析狀態失敗（HTTP ${res.status}），請重新上傳。`
-            );
-          }
-          return;
-        }
-        failures = 0;
-        const { job } = await res.json();
-        setStatus(job.status);
-        if (job.status === "ready") {
-          stop();
-          router.push(`/guide/${jobId}`);
-        }
-        if (job.status === "error") {
-          stop(job.error ?? "解析失敗");
-        }
-      } catch {
-        if (++failures >= MAX_POLL_FAILURES) {
-          stop("查詢解析狀態時連線失敗，請確認網路後重新上傳。");
-        }
-      }
-    }, 2500);
-    return () => clearInterval(timer);
-  }, [jobId, router]);
+        const bytes = await file.arrayBuffer();
+        // 先做 base64（pdfjs 會把 buffer 轉移給 worker）
+        const fileBase64 = await blobToBase64(file);
 
-  if (status && status !== "error") {
-    const activeIdx = STAGES.findIndex((s) => s.keys.includes(status));
+        setStatus("rendering");
+        const pages: Blob[] = isPdf ? await pdfToPageBlobs(bytes) : [file];
+
+        setStatus("parsing");
+        const guide = await parseManualWithGemini({
+          apiKey,
+          fileType: isPdf ? "pdf" : "image",
+          pdfBase64: isPdf ? fileBase64 : undefined,
+          images: isPdf ? undefined : [{ base64: fileBase64, mimeType: file.type }],
+          pageCount: pages.length,
+        });
+
+        setStatus("saving");
+        const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+        await saveLocalGuide({
+          id,
+          createdAt: new Date().toISOString(),
+          fileName: file.name,
+          guide,
+          pages,
+        });
+        router.push(`/guide/${id}`);
+      } catch (err) {
+        setStatus(null);
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    },
+    [router]
+  );
+
+  if (status) {
+    const activeIdx = STAGES.findIndex((s) => s.key === status);
     return (
       <div className="pipeline-status">
         <h3>正在生成你的組裝指南…</h3>
-        <p>AI 正在閱讀每一頁，辨識零件、箭頭與步驟，通常需要 1–3 分鐘。</p>
+        <p>AI 正在閱讀每一頁，辨識零件、箭頭與步驟，通常需要 1–3 分鐘。請保持此頁開啟。</p>
         <div className="pipeline-steps">
           {STAGES.map((s, i) => (
             <span
-              key={s.label}
+              key={s.key}
               className={
                 "pipeline-chip " +
                 (i < activeIdx ? "done" : i === activeIdx ? "active" : "")
@@ -158,7 +142,7 @@ export default function Uploader() {
         <IconUpload size={26} />
       </span>
       <h3>拖放或點擊上傳 IKEA 組裝說明書</h3>
-      <p>支援 PDF、JPG、PNG。先到右上角「API 金鑰」設定 Gemini 金鑰（僅存於你的瀏覽器）</p>
+      <p>支援 PDF、JPG、PNG（14MB 以內）。先到右上角「API 金鑰」設定 Gemini 金鑰（僅存於你的瀏覽器）</p>
       {error && <div className="upload-error">{error}</div>}
       <input
         ref={inputRef}
