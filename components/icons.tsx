@@ -1,7 +1,7 @@
 /**
- * 依 IKEA Skapa 設計系統的 icon 規格繪製的線條圖示:
- * 24px 格線、2px 筆畫、平直端點、單色(currentColor)。
- * 取代先前散落各處的 emoji,視覺語彙與 IKEA.com 一致。
+ * 依 IKEA Skapa 設計系統的 icon 規格繪製的線條圖示：
+ * 24px 格線、2px 筆畫、平直端點、單色（currentColor）。
+ * 取代先前散落各處的 emoji，視覺語彙與 IKEA.com 一致。
  */
 
 function Base({

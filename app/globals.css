@@ -1,10 +1,10 @@
 /*
- * 設計語彙對齊 IKEA.com(Skapa 設計系統):
- * - 品牌色:藍 #0058A3、黃 #FFDB00(僅作品牌/強調,不當底色鋪滿)
- * - 介面以白底為主,文字 #111,次要 #484848,髮絲線 #DFDFDF,區塊底 #F5F5F5
- * - 語意色:成功 #0A8A00、錯誤 #CC0008、警示 #F26A1B
- * - 按鈕一律全圓角膠囊(pill);卡片方角(4px)、極少陰影、以框線分隔
- * - 字體:Noto(IKEA 品牌字體 Noto IKEA 的基底);中文為 Noto Sans TC
+ * 設計語彙對齊 IKEA.com（Skapa 設計系統）：
+ * - 品牌色：藍 #0058A3、黃 #FFDB00（僅作品牌/強調，不當底色鋪滿）
+ * - 介面以白底為主，文字 #111，次要 #484848，髮絲線 #DFDFDF，區塊底 #F5F5F5
+ * - 語意色：成功 #0A8A00、錯誤 #CC0008、警示 #F26A1B
+ * - 按鈕一律全圓角膠囊（pill）；卡片方角（4px）、極少陰影、以框線分隔
+ * - 字體：Noto（IKEA 品牌字體 Noto IKEA 的基底）；中文為 Noto Sans TC
  */
 
 :root {
@@ -56,7 +56,7 @@ button {
   padding: 0 24px;
 }
 
-/* ---------- 頂部導覽(白底 + 官方 logo) ---------- */
+/* ---------- 頂部導覽（白底 + 官方 logo） ---------- */
 .topbar {
   background: #fff;
   padding: 12px 0;
@@ -69,6 +69,15 @@ button {
   align-items: center;
   gap: 16px;
 }
+.logo-link {
+  display: inline-flex;
+  flex: none;
+  border-radius: 4px;
+}
+.logo-link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
 .logo-img {
   height: 36px;
   width: auto;
@@ -78,20 +87,48 @@ button {
   font-weight: 700;
   font-size: 16px;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .topbar-right {
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: none;
 }
 .topbar a.home-link {
   color: var(--blue);
   font-size: 14px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
-/* ---------- API 金鑰設定(右上角) ---------- */
+/* 窄螢幕：logo 本身可回首頁，收起文字連結與標題，按鈕縮小 */
+@media (max-width: 720px) {
+  .topbar .container {
+    gap: 12px;
+  }
+  .topbar-title {
+    display: none;
+  }
+  .topbar a.home-link {
+    display: none;
+  }
+  .topbar-right {
+    gap: 10px;
+  }
+  .logo-img {
+    height: 30px;
+  }
+  .apikey-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+/* ---------- API 金鑰設定（右上角） ---------- */
 .apikey-wrap {
   position: relative;
 }
@@ -112,12 +149,24 @@ button {
   right: 0;
   top: calc(100% + 10px);
   width: 340px;
+  max-width: calc(100vw - 32px);
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 4px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
   padding: 18px;
   z-index: 80;
+}
+/* 窄螢幕：面板改固定在視窗內，不會超出畫面 */
+@media (max-width: 480px) {
+  .apikey-panel {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    top: 64px;
+    width: auto;
+    max-width: none;
+  }
 }
 .apikey-label {
   display: block;
@@ -176,7 +225,7 @@ button {
   font-size: 13.5px;
 }
 
-/* ---------- 按鈕(IKEA 膠囊型) ---------- */
+/* ---------- 按鈕（IKEA 膠囊型） ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -213,7 +262,7 @@ button {
   cursor: not-allowed;
 }
 
-/* 圓形 icon 按鈕(IKEA.com 樣式) */
+/* 圓形 icon 按鈕（IKEA.com 樣式） */
 .icon-btn {
   width: 40px;
   height: 40px;
@@ -238,8 +287,24 @@ button {
 }
 
 /* ---------- 首頁 ---------- */
+/* 雙欄格局：左欄是標題+上傳區（閱讀寬度），右欄放示範卡片，
+   讓寬螢幕下不再留一大片空白 */
+.home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(300px, 4fr);
+  gap: 48px;
+  align-items: start;
+  padding: 64px 0 56px;
+}
+@media (max-width: 960px) {
+  .home-grid {
+    grid-template-columns: 1fr;
+    padding: 40px 0 48px;
+  }
+}
+
 .hero {
-  padding: 64px 0 8px;
+  padding: 0 0 8px;
   max-width: 760px;
 }
 .hero h1 {
@@ -256,7 +321,7 @@ button {
 }
 
 .upload-zone {
-  margin: 36px 0;
+  margin: 36px 0 0;
   max-width: 760px;
   background: #fff;
   border: 2px dashed var(--line);
@@ -300,7 +365,7 @@ button {
 
 .pipeline-status {
   max-width: 760px;
-  margin: 36px 0;
+  margin: 36px 0 0;
   border: 1px solid var(--line);
   border-radius: 4px;
   padding: 32px;
@@ -346,7 +411,7 @@ button {
   }
 }
 
-/* 示範卡片(IKEA 商品卡風格:圖 + 名稱 + 膠囊按鈕) */
+/* 示範卡片（IKEA 商品卡風格：圖 + 名稱 + 膠囊按鈕） */
 .demo-card {
   max-width: 760px;
   margin: 0 0 56px;
@@ -375,7 +440,111 @@ button {
   font-size: 13.5px;
 }
 
-/* 組裝前須知:直接使用 IKEA 說明書小人物插圖 */
+/* 首頁右欄的直立示範卡片 */
+.demo-card.side {
+  flex-direction: column;
+  align-items: stretch;
+  max-width: none;
+  margin: 0;
+  padding: 20px;
+  gap: 14px;
+}
+.demo-card.side .thumb {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+  background: var(--bg-subtle);
+  border-radius: 4px;
+}
+.demo-card.side .btn {
+  align-self: flex-start;
+}
+@media (max-width: 960px) {
+  .demo-card.side {
+    margin-top: 32px;
+  }
+}
+
+/* 我的解析紀錄（儲存於瀏覽器 IndexedDB） */
+.history-section {
+  border-top: 1px solid var(--line);
+  padding: 40px 0 48px;
+}
+.history-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.history-section .sub {
+  color: var(--text-3);
+  font-size: 13.5px;
+  margin: 0 0 20px;
+}
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+@media (max-width: 480px) {
+  .history-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.history-card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+}
+.history-card .thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  background: var(--bg-subtle);
+  border-radius: 4px;
+  flex: none;
+}
+.history-card .thumb.placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+}
+.history-card .info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.history-card .info b {
+  font-size: 14.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-card .meta {
+  font-size: 12px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-card .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: none;
+}
+.history-card .actions .btn {
+  padding: 7px 18px;
+  font-size: 13px;
+}
+
+/* 組裝前須知：直接使用 IKEA 說明書小人物插圖 */
 .picto-section {
   border-top: 1px solid var(--line);
   padding: 44px 0 72px;
@@ -464,7 +633,7 @@ button {
   transition: width 0.4s ease;
 }
 
-/* 步驟號碼列(仿說明書的大數字步驟) */
+/* 步驟號碼列（仿說明書的大數字步驟） */
 .step-strip {
   display: flex;
   gap: 8px;
@@ -660,7 +829,7 @@ button {
   font-size: 11.5px;
 }
 
-/* 提示區塊(IKEA 訊息面板:灰底 + 語意色 icon) */
+/* 提示區塊（IKEA 訊息面板：灰底 + 語意色 icon） */
 .callout {
   border-radius: 4px;
   padding: 10px 12px;

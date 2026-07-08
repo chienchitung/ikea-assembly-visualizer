@@ -3,7 +3,7 @@ import { readGuide, readJob } from "@/lib/store";
 
 export const runtime = "nodejs";
 
-/** 查詢解析工作狀態;完成時附上完整指南 JSON。 */
+/** 查詢解析工作狀態；完成時附上完整指南 JSON。 */
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
