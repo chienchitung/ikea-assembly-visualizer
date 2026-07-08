@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { AssemblyGuide } from "./schema";
 import { SYSTEM_PROMPT, buildUserText } from "./prompt";
+import { repairGuide } from "./guideRepair";
 
 /**
  * 瀏覽器端的 Google Gemini 解析引擎。
@@ -90,9 +91,32 @@ export async function parseManualWithGemini(input: GeminiParseInput): Promise<As
     throw new Error(`Gemini 未回傳內容（finishReason=${cand.finishReason ?? "?"}）。`);
   }
 
-  const parsed = AssemblyGuide.safeParse(JSON.parse(text));
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error("Gemini 回傳的內容不是有效 JSON，請再試一次。");
+  }
+
+  // 結構化輸出偶爾會漏欄位或超出枚舉——先嚴格驗證，失敗就修復後再驗一次，
+  // 不因單一小欄位讓整份指南作廢
+  let parsed = AssemblyGuide.safeParse(json);
   if (!parsed.success) {
-    throw new Error("Gemini 回傳的指南格式不完整，請再試一次。");
+    console.warn(
+      "[geminiParse] 指南格式不完整，嘗試自動修復：",
+      parsed.error.issues.slice(0, 10).map((i) => `${i.path.join(".")}: ${i.message}`)
+    );
+    parsed = AssemblyGuide.safeParse(repairGuide(json, input.fileType, input.pageCount));
+  }
+  if (!parsed.success) {
+    const detail = parsed.error.issues
+      .slice(0, 3)
+      .map((i) => `${i.path.join(".")}：${i.message}`)
+      .join("；");
+    throw new Error(`Gemini 回傳的指南格式不完整（${detail}），請再試一次。`);
+  }
+  if (parsed.data.steps.length === 0) {
+    throw new Error("未能從這份文件解析出任何組裝步驟，請確認上傳的是完整的組裝說明書。");
   }
   return parsed.data;
 }
