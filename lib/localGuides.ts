@@ -60,3 +60,55 @@ export async function getLocalGuide(id: string): Promise<LocalGuideRecord | null
     db.close();
   }
 }
+
+/** 解析紀錄清單用的摘要資訊 */
+export interface LocalGuideMeta {
+  id: string;
+  createdAt: string;
+  fileName: string;
+  productName: string;
+  stepCount: number;
+  pageCount: number;
+  /** 說明書第一頁縮圖 */
+  thumbnail: Blob | null;
+}
+
+/** 列出此瀏覽器保存的所有解析紀錄（新到舊） */
+export async function listLocalGuides(): Promise<LocalGuideMeta[]> {
+  if (typeof indexedDB === "undefined") return [];
+  const db = await openDb();
+  try {
+    const recs = await new Promise<LocalGuideRecord[]>((resolve, reject) => {
+      const req = db.transaction(STORE, "readonly").objectStore(STORE).getAll();
+      req.onsuccess = () => resolve((req.result as LocalGuideRecord[]) ?? []);
+      req.onerror = () => reject(req.error ?? new Error("讀取本機儲存失敗"));
+    });
+    return recs
+      .map((r) => ({
+        id: r.id,
+        createdAt: r.createdAt,
+        fileName: r.fileName,
+        productName: r.guide.product.name,
+        stepCount: r.guide.steps.length,
+        pageCount: r.pages.length,
+        thumbnail: r.pages[0] ?? null,
+      }))
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  } finally {
+    db.close();
+  }
+}
+
+export async function deleteLocalGuide(id: string): Promise<void> {
+  const db = await openDb();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error ?? new Error("刪除本機儲存失敗"));
+    });
+  } finally {
+    db.close();
+  }
+}

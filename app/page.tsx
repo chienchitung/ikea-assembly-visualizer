@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Uploader from "@/components/Uploader";
+import GuideHistory from "@/components/GuideHistory";
 
 export default function HomePage() {
   return (
@@ -33,6 +34,8 @@ export default function HomePage() {
           </Link>
         </aside>
       </div>
+
+      <GuideHistory />
 
       <section className="picto-section">
         <h2>組裝前，先看看這些</h2>

@@ -465,6 +465,85 @@ button {
   }
 }
 
+/* 我的解析紀錄（儲存於瀏覽器 IndexedDB） */
+.history-section {
+  border-top: 1px solid var(--line);
+  padding: 40px 0 48px;
+}
+.history-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.history-section .sub {
+  color: var(--text-3);
+  font-size: 13.5px;
+  margin: 0 0 20px;
+}
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+@media (max-width: 480px) {
+  .history-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.history-card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+}
+.history-card .thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  background: var(--bg-subtle);
+  border-radius: 4px;
+  flex: none;
+}
+.history-card .thumb.placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+}
+.history-card .info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.history-card .info b {
+  font-size: 14.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-card .meta {
+  font-size: 12px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-card .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: none;
+}
+.history-card .actions .btn {
+  padding: 7px 18px;
+  font-size: 13px;
+}
+
 /* 組裝前須知：直接使用 IKEA 說明書小人物插圖 */
 .picto-section {
   border-top: 1px solid var(--line);
