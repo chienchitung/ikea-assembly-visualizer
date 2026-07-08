@@ -108,6 +108,48 @@ export default function GuideViewer({ id }: { id: string }) {
     return m;
   }, [guide]);
 
+  // 進度記憶：載入指南後還原上次的完成勾選與所在步驟；之後隨操作保存
+  const progressKey = `guide-progress-${id}`;
+  useEffect(() => {
+    if (!guide) return;
+    try {
+      const raw = localStorage.getItem(progressKey);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { done?: string[]; stepIdx?: number };
+      if (Array.isArray(saved.done)) setDone(new Set(saved.done));
+      if (
+        typeof saved.stepIdx === "number" &&
+        saved.stepIdx >= 0 &&
+        saved.stepIdx < guide.steps.length
+      ) {
+        setStepIdx(saved.stepIdx);
+      }
+    } catch {
+      /* 進度資料壞掉就從頭開始 */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guide, progressKey]);
+  useEffect(() => {
+    if (!guide) return;
+    localStorage.setItem(progressKey, JSON.stringify({ done: [...done], stepIdx }));
+  }, [guide, done, stepIdx, progressKey]);
+
+  // 鍵盤導航：← → 切換步驟（原始說明書模態框開啟時交給模態框）
+  useEffect(() => {
+    if (!guide) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (originalOpen) return;
+      const target = e.target as HTMLElement | null;
+      if (target && /^(input|textarea|select)$/i.test(target.tagName)) return;
+      if (e.key === "ArrowLeft") setStepIdx((i) => Math.max(0, i - 1));
+      if (e.key === "ArrowRight") {
+        setStepIdx((i) => Math.min(guide.steps.length - 1, i + 1));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [guide, originalOpen]);
+
   if (error) return <div className="loading-page">{error}</div>;
   if (!guide) return <div className="loading-page">載入指南中…</div>;
 
