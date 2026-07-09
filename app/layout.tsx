@@ -25,9 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span className="topbar-title">組裝說明書視覺化指南</span>
             <span className="topbar-right">
               <ApiKeySettings />
-              <Link className="home-link" href="/">
-                回首頁
-              </Link>
             </span>
           </div>
         </header>
