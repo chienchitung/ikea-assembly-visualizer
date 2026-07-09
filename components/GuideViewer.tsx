@@ -12,6 +12,7 @@ import {
   IconCompass,
   IconCrossCircle,
   IconDocument,
+  IconExpand,
   IconEye,
   IconEyeOff,
   IconLightbulb,
@@ -274,10 +275,24 @@ export default function GuideViewer({ id }: { id: string }) {
             </button>
             <button
               className="icon-btn"
-              title={fullPage ? "放大細節" : "顯示整頁"}
+              title="縮小"
+              onClick={() => canvasRef.current?.zoomBy(1 / 1.5)}
+            >
+              <IconMagnifierMinus />
+            </button>
+            <button
+              className="icon-btn"
+              title="放大細節（可連續點擊）"
+              onClick={() => canvasRef.current?.zoomBy(1.5)}
+            >
+              <IconMagnifierPlus />
+            </button>
+            <button
+              className={"icon-btn" + (fullPage ? " on" : "")}
+              title={fullPage ? "回到聚焦裁切" : "顯示整頁"}
               onClick={() => setFullPage((v) => !v)}
             >
-              {fullPage ? <IconMagnifierPlus /> : <IconMagnifierMinus />}
+              <IconExpand />
             </button>
             <button
               className="icon-btn"

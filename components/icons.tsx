@@ -175,3 +175,9 @@ export const IconShare = (p: P) => (
     <path d="M5 12 V20 H19 V12" />
   </Base>
 );
+
+export const IconExpand = (p: P) => (
+  <Base {...p}>
+    <path d="M9 3 H3 V9 M15 3 H21 V9 M9 21 H3 V15 M15 21 H21 V15" />
+  </Base>
+);
