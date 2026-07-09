@@ -40,9 +40,12 @@ interface Props {
   showAnnotations: boolean;
 }
 
-/** 供外部（工具列）呼叫的能力：把當前步驟畫布輸出成 PNG */
+/** 供外部（工具列）呼叫的能力 */
 export interface StepCanvasHandle {
+  /** 把當前步驟畫布輸出成 PNG */
   exportPng(title: string): Promise<Blob | null>;
+  /** 逐步縮放：factor > 1 放大、< 1 縮小（夾限在 1–6 倍） */
+  zoomBy(factor: number): void;
 }
 
 /**
@@ -181,10 +184,20 @@ const StepCanvas = forwardRef<StepCanvasHandle, Props>(function StepCanvas(
     setZoom({ scale: 2.5, cx: px, cy: py });
   };
 
-  /* ---------- 匯出成 PNG（分享此步驟） ---------- */
+  /** 逐步縮放：以目前視野中心為錨點，factor>1 放大、<1 縮小 */
+  const zoomBy = (factor: number) => {
+    setZoom((z) => {
+      const scale = clamp(z.scale * factor, 1, 6);
+      if (scale === 1) return { scale: 1, cx: vb.x + vb.w / 2, cy: vb.y + vb.h / 2 };
+      return { ...z, scale };
+    });
+  };
+
+  /* ---------- 匯出成 PNG（分享此步驟） / 逐步縮放 ---------- */
   useImperativeHandle(
     handleRef,
     () => ({
+      zoomBy,
       async exportPng(title: string): Promise<Blob | null> {
         const svg = svgRef.current;
         if (!svg) return null;
