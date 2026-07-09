@@ -48,6 +48,11 @@ a:hover {
 
 button {
   font-family: inherit;
+  /* 避免快速連點按鈕（如畫布放大鏡）時，瀏覽器把點擊誤判為選取，
+     讓鄰近文字反白成藍底 */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .container {
@@ -768,6 +773,9 @@ button {
   align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--line);
+  /* 連點放大鏡等按鈕時，鄰近的步驟標題文字不應被反白選取 */
+  -webkit-user-select: none;
+  user-select: none;
 }
 .canvas-toolbar .step-label {
   font-weight: 700;
