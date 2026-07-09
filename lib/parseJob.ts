@@ -149,6 +149,8 @@ export function startParseJob(file: File): void {
         fileName: file.name,
         guide,
         pages,
+        // 留存原始檔，供解析紀錄/檢視器重新下載
+        sourceFile: file,
       });
       setState({ status: "done", phase: null, guideId: id });
     } catch (err) {

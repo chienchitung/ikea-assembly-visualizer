@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { deleteLocalGuide, listLocalGuides, type LocalGuideMeta } from "@/lib/localGuides";
+import {
+  deleteLocalGuide,
+  downloadLocalGuideSource,
+  listLocalGuides,
+  type LocalGuideMeta,
+} from "@/lib/localGuides";
 import { IconDocument } from "./icons";
 
 /**
@@ -79,6 +84,15 @@ export default function GuideHistory() {
                 <Link className="btn btn-primary" href={`/guide/${m.id}`}>
                   開啟
                 </Link>
+                {m.hasSource && (
+                  <button
+                    className="btn btn-secondary"
+                    title="下載當時上傳的原始說明書檔案"
+                    onClick={() => void downloadLocalGuideSource(m.id)}
+                  >
+                    下載原始檔
+                  </button>
+                )}
                 <button className="btn btn-secondary" onClick={() => void remove(m.id)}>
                   刪除
                 </button>
