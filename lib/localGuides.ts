@@ -75,6 +75,14 @@ export interface LocalGuideMeta {
   thumbnail: Blob | null;
   /** 是否留有原始檔可供下載（舊紀錄可能沒有） */
   hasSource: boolean;
+  /** 此筆紀錄佔用的儲存空間（頁面圖 + 原始檔 + 指南 JSON，約略值） */
+  bytes: number;
+}
+
+/** 位元組 → 人類可讀（KB / MB，1 位小數） */
+export function formatBytes(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 /** 列出此瀏覽器保存的所有解析紀錄（新到舊） */
@@ -97,6 +105,10 @@ export async function listLocalGuides(): Promise<LocalGuideMeta[]> {
         pageCount: r.pages.length,
         thumbnail: r.pages[0] ?? null,
         hasSource: !!r.sourceFile,
+        bytes:
+          r.pages.reduce((sum, p) => sum + p.size, 0) +
+          (r.sourceFile?.size ?? 0) +
+          JSON.stringify(r.guide).length,
       }))
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   } finally {

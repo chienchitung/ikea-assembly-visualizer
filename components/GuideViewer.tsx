@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AssemblyGuide, Part, Step } from "@/lib/schema";
 import { getLocalGuide, triggerDownload } from "@/lib/localGuides";
-import StepCanvas from "./StepCanvas";
+import StepCanvas, { type StepCanvasHandle } from "./StepCanvas";
 import {
   IconCheck,
   IconChevronLeft,
@@ -17,6 +17,7 @@ import {
   IconMagnifierMinus,
   IconMagnifierPlus,
   IconReplay,
+  IconShare,
   IconWarningTriangle,
   IconWrench,
 } from "./icons";
@@ -59,6 +60,8 @@ export default function GuideViewer({ id }: { id: string }) {
   const [pageUrls, setPageUrls] = useState<string[] | null>(null);
   /** 本機指南留存的原始檔（供下載）；示範指南或舊紀錄為 null */
   const [source, setSource] = useState<{ blob: Blob; name: string } | null>(null);
+  const canvasRef = useRef<StepCanvasHandle>(null);
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -191,6 +194,28 @@ export default function GuideViewer({ id }: { id: string }) {
     if (stepIdx < steps.length - 1) goTo(stepIdx + 1);
   };
 
+  /** 分享此步驟：畫布輸出成 PNG，行動裝置走系統分享、其他環境直接下載 */
+  const shareStep = async () => {
+    if (sharing) return;
+    setSharing(true);
+    try {
+      const title = `${guide.product.name}｜步驟 ${step.index}：${step.title}`;
+      const blob = await canvasRef.current?.exportPng(title);
+      if (!blob) return;
+      const fileName = `${guide.product.name}-步驟${step.index}.png`;
+      const file = new File([blob], fileName, { type: "image/png" });
+      if (typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title });
+      } else {
+        triggerDownload(blob, fileName);
+      }
+    } catch {
+      /* 使用者取消系統分享等，不視為錯誤 */
+    } finally {
+      setSharing(false);
+    }
+  };
+
   return (
     <main className="container">
       <div className="guide-head">
@@ -256,6 +281,14 @@ export default function GuideViewer({ id }: { id: string }) {
             </button>
             <button
               className="icon-btn"
+              title="分享此步驟（輸出成圖片）"
+              disabled={sharing}
+              onClick={() => void shareStep()}
+            >
+              <IconShare />
+            </button>
+            <button
+              className="icon-btn"
               title="查看原始說明書"
               onClick={() => {
                 setOriginalPage(step.pages[0] ?? step.visual.basePage);
@@ -267,6 +300,7 @@ export default function GuideViewer({ id }: { id: string }) {
           </div>
 
           <StepCanvas
+            ref={canvasRef}
             pageSrc={pageSrc}
             visual={step.visual}
             fullPage={fullPage}

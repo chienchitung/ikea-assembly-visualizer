@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   deleteLocalGuide,
   downloadLocalGuideSource,
+  formatBytes,
   listLocalGuides,
   type LocalGuideMeta,
 } from "@/lib/localGuides";
@@ -52,10 +53,15 @@ export default function GuideHistory() {
 
   if (!metas || metas.length === 0) return null;
 
+  const totalBytes = metas.reduce((sum, m) => sum + m.bytes, 0);
+
   return (
     <section className="history-section">
       <h2>我的解析紀錄</h2>
-      <p className="sub">保存在此瀏覽器中，隨時可回來查看（清除瀏覽資料會一併清除）。</p>
+      <p className="sub">
+        保存在此瀏覽器中，隨時可回來查看（清除瀏覽資料會一併清除）。共 {metas.length} 筆，佔用約{" "}
+        {formatBytes(totalBytes)}。
+      </p>
       <div className="history-grid">
         {metas.map((m) => {
           const thumb = thumbsRef.current.get(m.id);
@@ -72,7 +78,7 @@ export default function GuideHistory() {
               <div className="info">
                 <b>{m.productName}</b>
                 <span className="meta">
-                  {m.stepCount} 步驟 · {m.pageCount} 頁 ·{" "}
+                  {m.stepCount} 步驟 · {m.pageCount} 頁 · {formatBytes(m.bytes)} ·{" "}
                   {new Date(m.createdAt).toLocaleString("zh-TW", {
                     dateStyle: "medium",
                     timeStyle: "short",
