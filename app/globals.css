@@ -705,16 +705,19 @@ button {
   font-size: 15px;
   margin-right: auto;
 }
+/* 固定高度：每一步的裁切比例不同，若讓高度跟著圖面變化，
+   切換步驟時整頁會上下跳動。改為恆定高度、圖面在框內等比縮放。 */
 .canvas-stage {
   background: #fff;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 8px;
+  height: clamp(360px, 56vh, 660px);
 }
 .canvas-stage svg {
-  max-width: 100%;
-  height: auto;
-  max-height: 60vh;
+  width: 100%;
+  height: 100%;
 }
 .canvas-caption {
   padding: 8px 18px 4px;
@@ -985,6 +988,53 @@ button {
   justify-content: center;
   padding: 12px;
   border-top: 1px solid var(--line);
+}
+
+/* 組裝完成卡片 */
+.complete-card {
+  max-width: 420px;
+  padding: 40px 32px 32px;
+  text-align: center;
+  animation: ann-pop 0.35s ease-out;
+}
+.complete-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #eaf4e9;
+  color: var(--positive);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.complete-card h3 {
+  font-size: 23px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.complete-card p {
+  color: var(--text-2);
+  font-size: 14.5px;
+  margin: 0 0 6px;
+  line-height: 1.6;
+}
+.complete-card .complete-warn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-subtle);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--caution);
+  margin-top: 8px;
+}
+.complete-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
 }
 
 /* ---------- 標註動畫 ---------- */
