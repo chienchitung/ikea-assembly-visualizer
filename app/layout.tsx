@@ -31,7 +31,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </span>
           </div>
         </header>
+        <div className="disclaimer-bar">
+          <div className="container">
+            本網站為非官方之第三方獨立開發工具，與 IKEA 官方網站或服務無任何關聯。
+          </div>
+        </div>
         {children}
+        <footer className="site-footer">
+          <div className="container">
+            <span>開發者：Jackie Tung</span>
+            <a
+              href="https://github.com/chienchitung/ikea-assembly-visualizer"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub 開源專案
+            </a>
+          </div>
+        </footer>
       </body>
     </html>
   );
