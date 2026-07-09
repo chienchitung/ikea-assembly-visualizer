@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { Annotation, VisualSpec } from "@/lib/schema";
 
 // IKEA 色卡用色（與品牌延伸色一致）：藍=零件、橘=五金、綠=目標位置、紅=警示、粉=旋轉
@@ -33,6 +40,11 @@ interface Props {
   showAnnotations: boolean;
 }
 
+/** 供外部（工具列）呼叫的能力：把當前步驟畫布輸出成 PNG */
+export interface StepCanvasHandle {
+  exportPng(title: string): Promise<Blob | null>;
+}
+
 /**
  * 步驟畫布：以說明書頁面圖為底，依 VisualSpec 疊加 SVG 標註
  * （高亮 / 箭頭 / 位置標記 / 放大提示 / 對錯比較）。
@@ -40,14 +52,14 @@ interface Props {
  *
  * 標註分兩層渲染：先畫所有圖形（框、箭頭），再畫所有文字標籤，
  * 確保文字永遠在框線之上；文字位置會夾限在可視範圍內，避免被裁掉。
+ *
+ * 互動：雙指捏合縮放（1–6 倍）、放大後單指/滑鼠拖曳平移、
+ * 雙擊放大到該點（再雙擊還原）。切換步驟或裁切模式時自動還原。
  */
-export default function StepCanvas({
-  pageSrc,
-  visual,
-  fullPage,
-  replayKey,
-  showAnnotations,
-}: Props) {
+const StepCanvas = forwardRef<StepCanvasHandle, Props>(function StepCanvas(
+  { pageSrc, visual, fullPage, replayKey, showAnnotations }: Props,
+  handleRef
+) {
   const pageUrl = pageSrc(visual.basePage);
   const [aspect, setAspect] = useState<number | null>(null); // height / width
 
@@ -80,6 +92,156 @@ export default function StepCanvas({
   // 依可視範圍縮放標註尺寸，讓線寬/字級在裁切與整頁模式下視覺一致
   const u = vb.w / 100;
 
+  /* ---------- 縮放與平移（雙指捏合 / 拖曳 / 雙擊） ---------- */
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [zoom, setZoom] = useState({ scale: 1, cx: 0, cy: 0 });
+  useEffect(() => {
+    // 切換步驟、裁切模式或頁面比例改變時還原
+    setZoom({ scale: 1, cx: vb.x + vb.w / 2, cy: vb.y + vb.h / 2 });
+  }, [visual, fullPage, vb]);
+
+  // 實際顯示的視野：以 (cx, cy) 為中心、依倍率縮小，夾限在整頁範圍內
+  const evb = useMemo<ViewRect>(() => {
+    if (zoom.scale <= 1) return vb;
+    const w = vb.w / zoom.scale;
+    const h = vb.h / zoom.scale;
+    const x = clamp(zoom.cx - w / 2, 0, W - w);
+    const y = clamp(zoom.cy - h / 2, 0, H - h);
+    return { x, y, w, h };
+  }, [vb, zoom, W, H]);
+
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
+  const evbRef = useRef(evb);
+  evbRef.current = evb;
+
+  const ptrs = useRef(new Map<number, { x: number; y: number }>());
+  const pinch = useRef<{ dist: number; scale: number; mid: { x: number; y: number } } | null>(
+    null
+  );
+
+  const unitsPerPx = () => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    return rect && rect.width > 0 ? evbRef.current.w / rect.width : 1;
+  };
+  const pinchOf = () => {
+    const [a, b] = [...ptrs.current.values()];
+    return {
+      dist: Math.hypot(a.x - b.x, a.y - b.y) || 1,
+      mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    };
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    ptrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* 合成事件無作用中的 pointer 時忽略 */
+    }
+    if (ptrs.current.size === 2) {
+      pinch.current = { ...pinchOf(), scale: zoomRef.current.scale };
+    }
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const prev = ptrs.current.get(e.pointerId);
+    if (!prev) return;
+    ptrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.current.size === 2 && pinch.current) {
+      const now = pinchOf();
+      const scale = clamp(pinch.current.scale * (now.dist / pinch.current.dist), 1, 6);
+      const k = unitsPerPx();
+      const dx = (now.mid.x - pinch.current.mid.x) * k;
+      const dy = (now.mid.y - pinch.current.mid.y) * k;
+      pinch.current.mid = now.mid;
+      setZoom((z) => ({ scale, cx: z.cx - dx, cy: z.cy - dy }));
+    } else if (ptrs.current.size === 1 && zoomRef.current.scale > 1) {
+      const k = unitsPerPx();
+      setZoom((z) => ({
+        ...z,
+        cx: z.cx - (e.clientX - prev.x) * k,
+        cy: z.cy - (e.clientY - prev.y) * k,
+      }));
+    }
+  };
+  const onPointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    ptrs.current.delete(e.pointerId);
+    if (ptrs.current.size < 2) pinch.current = null;
+  };
+  const onDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (zoomRef.current.scale > 1) {
+      setZoom({ scale: 1, cx: vb.x + vb.w / 2, cy: vb.y + vb.h / 2 });
+      return;
+    }
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0) return;
+    const cur = evbRef.current;
+    const px = cur.x + ((e.clientX - rect.left) / rect.width) * cur.w;
+    const py = cur.y + ((e.clientY - rect.top) / rect.height) * cur.h;
+    setZoom({ scale: 2.5, cx: px, cy: py });
+  };
+
+  /* ---------- 匯出成 PNG（分享此步驟） ---------- */
+  useImperativeHandle(
+    handleRef,
+    () => ({
+      async exportPng(title: string): Promise<Blob | null> {
+        const svg = svgRef.current;
+        if (!svg) return null;
+        const clone = svg.cloneNode(true) as SVGSVGElement;
+        // 底圖以 data URL 內嵌，讓序列化後的 SVG 自給自足
+        const resp = await fetch(pageUrl);
+        const imgBlob = await resp.blob();
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const fr = new FileReader();
+          fr.onload = () => resolve(fr.result as string);
+          fr.onerror = () => reject(new Error("讀取頁面圖失敗"));
+          fr.readAsDataURL(imgBlob);
+        });
+        clone.querySelector("image")?.setAttribute("href", dataUrl);
+        // 匯出一律用基準視野（忽略目前縮放）；脫離頁面 CSS 後動畫消失、呈現最終狀態
+        clone.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+        const outW = 1400;
+        const outH = Math.round((outW * vb.h) / vb.w);
+        clone.setAttribute("width", String(outW));
+        clone.setAttribute("height", String(outH));
+        clone.setAttribute("font-family", "'Noto Sans TC', sans-serif");
+        const xml = new XMLSerializer().serializeToString(clone);
+        const svgUrl = URL.createObjectURL(new Blob([xml], { type: "image/svg+xml" }));
+        try {
+          const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const i = new Image();
+            i.onload = () => resolve(i);
+            i.onerror = () => reject(new Error("SVG 轉圖失敗"));
+            i.src = svgUrl;
+          });
+          const header = 84;
+          const canvas = document.createElement("canvas");
+          canvas.width = outW;
+          canvas.height = outH + header;
+          const ctx = canvas.getContext("2d")!;
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#111";
+          ctx.font = "700 34px 'Noto Sans TC', sans-serif";
+          ctx.fillText(title, 32, 54);
+          ctx.strokeStyle = "#dfdfdf";
+          ctx.beginPath();
+          ctx.moveTo(0, header - 0.5);
+          ctx.lineTo(canvas.width, header - 0.5);
+          ctx.stroke();
+          ctx.drawImage(img, 0, header, outW, outH);
+          return await new Promise<Blob | null>((resolve) =>
+            canvas.toBlob(resolve, "image/png")
+          );
+        } finally {
+          URL.revokeObjectURL(svgUrl);
+        }
+      },
+    }),
+    [pageUrl, vb]
+  );
+
   if (!aspect) {
     return (
       <div className="canvas-stage" style={{ minHeight: 320, alignItems: "center" }}>
@@ -91,8 +253,23 @@ export default function StepCanvas({
   const labels = layoutLabels(visual.annotations, nx, ny, u, vb);
 
   return (
-    <div className="canvas-stage">
-      <svg viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} xmlns="http://www.w3.org/2000/svg">
+    <div
+      className="canvas-stage"
+      style={{
+        touchAction: zoom.scale > 1 ? "none" : "pan-y",
+        cursor: zoom.scale > 1 ? "grab" : "zoom-in",
+      }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerEnd}
+      onPointerCancel={onPointerEnd}
+      onDoubleClick={onDoubleClick}
+    >
+      <svg
+        ref={svgRef}
+        viewBox={`${evb.x} ${evb.y} ${evb.w} ${evb.h}`}
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <image href={pageUrl} x={0} y={0} width={W} height={H} />
         {showAnnotations && (
           <g key={replayKey}>
@@ -129,7 +306,9 @@ export default function StepCanvas({
       </svg>
     </div>
   );
-}
+});
+
+export default StepCanvas;
 
 /* ---------- 標籤避讓排版 ---------- */
 

@@ -168,3 +168,10 @@ export const IconList = (p: P) => (
     <path d="M4 5.5 H4.02 M4 12 H4.02 M4 18.5 H4.02" strokeWidth={2.8} />
   </Base>
 );
+
+export const IconShare = (p: P) => (
+  <Base {...p}>
+    <path d="M12 15 V3 M7.5 7.5 L12 3 L16.5 7.5" />
+    <path d="M5 12 V20 H19 V12" />
+  </Base>
+);
