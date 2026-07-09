@@ -128,6 +128,42 @@ button {
   }
 }
 
+/* ---------- 非官方聲明條 ---------- */
+.disclaimer-bar {
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--line);
+}
+.disclaimer-bar .container {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 12.5px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+/* ---------- 頁尾 ---------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 24px 0;
+  margin-top: 24px;
+}
+.site-footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.site-footer a {
+  color: var(--text-3);
+  text-decoration: underline;
+}
+.site-footer a:hover {
+  color: var(--blue);
+}
+
 /* ---------- API 金鑰設定（右上角） ---------- */
 .apikey-wrap {
   position: relative;
