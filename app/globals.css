@@ -98,14 +98,7 @@ button {
   gap: 16px;
   flex: none;
 }
-.topbar a.home-link {
-  color: var(--blue);
-  font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-/* 窄螢幕：logo 本身可回首頁，收起文字連結與標題，按鈕縮小 */
+/* 窄螢幕：logo 本身可回首頁，收起標題文字，按鈕縮小 */
 @media (max-width: 720px) {
   .topbar .container {
     gap: 12px;
@@ -113,18 +106,11 @@ button {
   .topbar-title {
     display: none;
   }
-  .topbar a.home-link {
-    display: none;
-  }
   .topbar-right {
     gap: 10px;
   }
   .logo-img {
     height: 30px;
-  }
-  .apikey-btn {
-    padding: 8px 14px;
-    font-size: 13px;
   }
 }
 
@@ -164,21 +150,22 @@ button {
   color: var(--blue);
 }
 
-/* ---------- API 金鑰設定（右上角） ---------- */
+/* ---------- API 金鑰設定（右上角，比照 IKEA.com 頁首圓形 icon 按鈕） ---------- */
 .apikey-wrap {
   position: relative;
 }
 .apikey-btn {
-  padding: 8px 18px;
-  font-size: 13.5px;
   position: relative;
 }
 .key-dot {
-  width: 8px;
-  height: 8px;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--positive);
-  display: inline-block;
+  border: 2px solid #fff;
 }
 .apikey-panel {
   position: absolute;
@@ -514,7 +501,53 @@ button {
 .history-section .sub {
   color: var(--text-3);
   font-size: 13.5px;
-  margin: 0 0 20px;
+  margin: 0;
+}
+.history-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.history-sort {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 64px;
+  padding: 3px;
+  flex: none;
+}
+.history-sort button {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  border-radius: 64px;
+  cursor: pointer;
+}
+.history-sort button.on {
+  background: var(--text);
+  color: #fff;
+}
+.storage-meter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+.storage-meter .progress-bar {
+  max-width: 220px;
+}
+.storage-meter.near-full .progress-bar > div {
+  background: var(--caution);
+}
+.storage-meter.near-full {
+  color: var(--caution);
 }
 .history-grid {
   display: grid;

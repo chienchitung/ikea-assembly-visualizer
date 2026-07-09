@@ -35,6 +35,12 @@ function openDb(): Promise<IDBDatabase> {
   });
 }
 
+/**
+ * 沒有 app 層級的筆數上限——完全受瀏覽器的 IndexedDB 配額限制（依裝置與
+ * 瀏覽器不同，桌面通常數 GB，手機/Safari 可能小得多）。寫入超過配額時
+ * IndexedDB 會拋出 QuotaExceededError，這裡攔截並轉成看得懂的訊息，
+ * 引導使用者到解析紀錄區刪除較舊的紀錄再試一次。
+ */
 export async function saveLocalGuide(rec: LocalGuideRecord): Promise<void> {
   const db = await openDb();
   try {
@@ -42,10 +48,34 @@ export async function saveLocalGuide(rec: LocalGuideRecord): Promise<void> {
       const tx = db.transaction(STORE, "readwrite");
       tx.objectStore(STORE).put(rec);
       tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error ?? new Error("寫入本機儲存失敗"));
+      tx.onerror = () => reject(tx.error);
     });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "QuotaExceededError") {
+      throw new Error(
+        "瀏覽器儲存空間已滿，無法保存這份指南。請回首頁的「我的解析紀錄」刪除幾筆較舊或較大的紀錄後再試一次。"
+      );
+    }
+    throw err instanceof Error ? err : new Error("寫入本機儲存失敗");
   } finally {
     db.close();
+  }
+}
+
+/** 瀏覽器層級的儲存配額概況（部分瀏覽器不支援時回傳 null）。 */
+export interface StorageEstimate {
+  usageBytes: number;
+  quotaBytes: number;
+}
+
+export async function getStorageEstimate(): Promise<StorageEstimate | null> {
+  if (typeof navigator === "undefined" || !navigator.storage?.estimate) return null;
+  try {
+    const { usage, quota } = await navigator.storage.estimate();
+    if (usage === undefined || quota === undefined) return null;
+    return { usageBytes: usage, quotaBytes: quota };
+  } catch {
+    return null;
   }
 }
 

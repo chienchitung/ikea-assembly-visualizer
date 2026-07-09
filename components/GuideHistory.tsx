@@ -1,22 +1,33 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   deleteLocalGuide,
   downloadLocalGuideSource,
   formatBytes,
+  getStorageEstimate,
   listLocalGuides,
   type LocalGuideMeta,
+  type StorageEstimate,
 } from "@/lib/localGuides";
 import { IconDocument } from "./icons";
 
 /**
  * 我的解析紀錄：列出此瀏覽器（IndexedDB）保存的所有已解析指南，
  * 可隨時回來重新開啟或刪除。沒有任何紀錄時整個區塊不顯示。
+ *
+ * 沒有 app 層級的筆數上限，只受瀏覽器儲存配額限制——這裡用
+ * navigator.storage.estimate() 顯示目前用量比例，並提供「依大小排序」
+ * 方便找出該清掉哪幾筆。
  */
+
+type SortMode = "recent" | "size";
+
 export default function GuideHistory() {
   const [metas, setMetas] = useState<LocalGuideMeta[] | null>(null);
+  const [estimate, setEstimate] = useState<StorageEstimate | null>(null);
+  const [sort, setSort] = useState<SortMode>("recent");
   const thumbsRef = useRef<Map<string, string>>(new Map());
 
   const load = useCallback(async () => {
@@ -33,6 +44,7 @@ export default function GuideHistory() {
     } catch {
       setMetas([]);
     }
+    setEstimate(await getStorageEstimate());
   }, []);
 
   useEffect(() => {
@@ -51,19 +63,55 @@ export default function GuideHistory() {
     [load]
   );
 
+  const sorted = useMemo(() => {
+    if (!metas) return [];
+    return sort === "size" ? [...metas].sort((a, b) => b.bytes - a.bytes) : metas;
+  }, [metas, sort]);
+
   if (!metas || metas.length === 0) return null;
 
   const totalBytes = metas.reduce((sum, m) => sum + m.bytes, 0);
+  const usedRatio = estimate ? estimate.usageBytes / estimate.quotaBytes : null;
+  const nearFull = usedRatio !== null && usedRatio > 0.8;
 
   return (
     <section className="history-section">
-      <h2>我的解析紀錄</h2>
-      <p className="sub">
-        保存在此瀏覽器中，隨時可回來查看（清除瀏覽資料會一併清除）。共 {metas.length} 筆，佔用約{" "}
-        {formatBytes(totalBytes)}。
-      </p>
+      <div className="history-head">
+        <div>
+          <h2>我的解析紀錄</h2>
+          <p className="sub">
+            保存在此瀏覽器中，隨時可回來查看（清除瀏覽資料會一併清除）。共 {metas.length}{" "}
+            筆，佔用約 {formatBytes(totalBytes)}。
+          </p>
+        </div>
+        <div className="history-sort">
+          <button
+            className={sort === "recent" ? "on" : ""}
+            onClick={() => setSort("recent")}
+          >
+            依時間
+          </button>
+          <button className={sort === "size" ? "on" : ""} onClick={() => setSort("size")}>
+            依大小
+          </button>
+        </div>
+      </div>
+
+      {estimate && (
+        <div className={"storage-meter" + (nearFull ? " near-full" : "")}>
+          <div className="progress-bar">
+            <div style={{ width: `${Math.min(100, (usedRatio ?? 0) * 100)}%` }} />
+          </div>
+          <span>
+            瀏覽器儲存空間已使用 {formatBytes(estimate.usageBytes)} / 約{" "}
+            {formatBytes(estimate.quotaBytes)}
+            {nearFull && "（快滿了，建議清理較舊的紀錄）"}
+          </span>
+        </div>
+      )}
+
       <div className="history-grid">
-        {metas.map((m) => {
+        {sorted.map((m) => {
           const thumb = thumbsRef.current.get(m.id);
           return (
             <div className="history-card" key={m.id}>

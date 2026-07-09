@@ -65,12 +65,12 @@ export default function ApiKeySettings() {
   return (
     <div className="apikey-wrap" ref={panelRef}>
       <button
-        className={"btn btn-secondary apikey-btn" + (saved ? " has-key" : "")}
+        className="icon-btn apikey-btn"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
+        title={saved ? "Gemini API 金鑰（已設定）" : "設定 Gemini API 金鑰"}
       >
-        <IconKey size={16} />
-        API 金鑰
+        <IconKey size={19} />
         {saved && <span className="key-dot" aria-label="已設定" />}
       </button>
 
@@ -84,7 +84,7 @@ export default function ApiKeySettings() {
               id="gemini-key"
               type={reveal ? "text" : "password"}
               value={key}
-              placeholder="AIza..."
+              placeholder="貼上你的 Gemini API 金鑰"
               autoComplete="off"
               spellCheck={false}
               onChange={(e) => setKey(e.target.value)}
