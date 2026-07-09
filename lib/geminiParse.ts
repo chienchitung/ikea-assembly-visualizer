@@ -57,10 +57,18 @@ export async function parseManualWithGemini(input: GeminiParseInput): Promise<As
     },
   };
 
-  let res: Response;
-  try {
-    res = await callGemini(input.apiKey, body);
-  } catch {
+  // 暫時性錯誤（連線失敗、429 限流、5xx）自動重試一次再放棄
+  let res: Response | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      res = await callGemini(input.apiKey, body);
+    } catch {
+      res = null;
+    }
+    if (res && res.status !== 429 && res.status < 500) break;
+    if (attempt === 0) await new Promise((r) => setTimeout(r, 2500));
+  }
+  if (!res) {
     throw new Error("無法連線到 Gemini API，請確認網路後再試。");
   }
 

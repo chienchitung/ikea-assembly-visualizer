@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AssemblyGuide, Part, Step } from "@/lib/schema";
-import { getLocalGuide } from "@/lib/localGuides";
+import { getLocalGuide, triggerDownload } from "@/lib/localGuides";
 import StepCanvas from "./StepCanvas";
 import {
   IconCheck,
@@ -57,6 +57,8 @@ export default function GuideViewer({ id }: { id: string }) {
   const [originalPage, setOriginalPage] = useState(1);
   /** 本機指南的頁面圖 object URL（1-based 對應 index+1）；null = 使用伺服器 API（示範指南） */
   const [pageUrls, setPageUrls] = useState<string[] | null>(null);
+  /** 本機指南留存的原始檔（供下載）；示範指南或舊紀錄為 null */
+  const [source, setSource] = useState<{ blob: Blob; name: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,6 +71,9 @@ export default function GuideViewer({ id }: { id: string }) {
           if (cancelled) return;
           urls = local.pages.map((b) => URL.createObjectURL(b));
           setPageUrls(urls);
+          if (local.sourceFile) {
+            setSource({ blob: local.sourceFile, name: local.fileName || "manual.pdf" });
+          }
           setGuide(local.guide);
           return;
         }
@@ -134,13 +139,29 @@ export default function GuideViewer({ id }: { id: string }) {
     localStorage.setItem(progressKey, JSON.stringify({ done: [...done], stepIdx }));
   }, [guide, done, stepIdx, progressKey]);
 
-  // 鍵盤導航：← → 切換步驟（原始說明書模態框開啟時交給模態框）
+  // 預載下一步的底圖，切換步驟時不用等載入
+  useEffect(() => {
+    if (!guide) return;
+    const next = guide.steps[stepIdx + 1];
+    if (!next) return;
+    const img = new Image();
+    img.src = pageSrc(next.visual.basePage);
+  }, [guide, stepIdx, pageSrc]);
+
+  // 鍵盤導航：← → 切換步驟；模態框開啟時 ← → 翻原始說明書頁、Esc 關閉
   useEffect(() => {
     if (!guide) return;
     const onKey = (e: KeyboardEvent) => {
-      if (originalOpen) return;
       const target = e.target as HTMLElement | null;
       if (target && /^(input|textarea|select)$/i.test(target.tagName)) return;
+      if (originalOpen) {
+        if (e.key === "Escape") setOriginalOpen(false);
+        if (e.key === "ArrowLeft") setOriginalPage((p) => Math.max(1, p - 1));
+        if (e.key === "ArrowRight") {
+          setOriginalPage((p) => Math.min(guide.source.pageCount, p + 1));
+        }
+        return;
+      }
       if (e.key === "ArrowLeft") setStepIdx((i) => Math.max(0, i - 1));
       if (e.key === "ArrowRight") {
         setStepIdx((i) => Math.min(guide.steps.length - 1, i + 1));
@@ -367,9 +388,20 @@ export default function GuideViewer({ id }: { id: string }) {
               <span>
                 原始說明書 — 第 {originalPage} / {guide.source.pageCount} 頁
               </span>
-              <button className="icon-btn" title="關閉" onClick={() => setOriginalOpen(false)}>
-                ✕
-              </button>
+              <span className="modal-head-actions">
+                {source && (
+                  <button
+                    className="btn btn-secondary"
+                    title="下載當時上傳的原始說明書檔案"
+                    onClick={() => triggerDownload(source.blob, source.name)}
+                  >
+                    下載原始檔
+                  </button>
+                )}
+                <button className="icon-btn" title="關閉" onClick={() => setOriginalOpen(false)}>
+                  ✕
+                </button>
+              </span>
             </div>
             <div className="modal-body">
               {/* eslint-disable-next-line @next/next/no-img-element */}

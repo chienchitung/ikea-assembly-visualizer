@@ -15,6 +15,8 @@ export interface LocalGuideRecord {
   guide: AssemblyGuide;
   /** 依頁碼排序的頁面圖（1-based 對應 index+1） */
   pages: Blob[];
+  /** 上傳的原始檔（PDF / 圖片），供之後重新下載；舊紀錄可能沒有 */
+  sourceFile?: Blob;
 }
 
 const DB_NAME = "ikea-assembly-guides";
@@ -71,6 +73,8 @@ export interface LocalGuideMeta {
   pageCount: number;
   /** 說明書第一頁縮圖 */
   thumbnail: Blob | null;
+  /** 是否留有原始檔可供下載（舊紀錄可能沒有） */
+  hasSource: boolean;
 }
 
 /** 列出此瀏覽器保存的所有解析紀錄（新到舊） */
@@ -92,11 +96,32 @@ export async function listLocalGuides(): Promise<LocalGuideMeta[]> {
         stepCount: r.guide.steps.length,
         pageCount: r.pages.length,
         thumbnail: r.pages[0] ?? null,
+        hasSource: !!r.sourceFile,
       }))
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   } finally {
     db.close();
   }
+}
+
+/** 觸發瀏覽器下載某筆紀錄的原始檔；沒有留存時回傳 false。 */
+export async function downloadLocalGuideSource(id: string): Promise<boolean> {
+  const rec = await getLocalGuide(id);
+  if (!rec?.sourceFile) return false;
+  triggerDownload(rec.sourceFile, rec.fileName || "manual.pdf");
+  return true;
+}
+
+/** 以隱形連結觸發下載（object URL 用完延遲釋放） */
+export function triggerDownload(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
 export async function deleteLocalGuide(id: string): Promise<void> {
