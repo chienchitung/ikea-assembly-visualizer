@@ -791,10 +791,18 @@ button {
   align-items: center;
   padding: 8px;
   height: clamp(360px, 56vh, 660px);
+  /* 畫布上的標註文字是 SVG <text>：雙擊縮放、拖曳平移等手勢容易被
+     瀏覽器誤判成選字，讓原生藍色選取反白疊在標籤上；畫布不需要
+     文字可選取，整層關閉。 */
+  -webkit-user-select: none;
+  user-select: none;
 }
 .canvas-stage svg {
   width: 100%;
   height: 100%;
+}
+.canvas-stage svg text {
+  user-select: none;
 }
 .canvas-caption {
   padding: 8px 18px 4px;
