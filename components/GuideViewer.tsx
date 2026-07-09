@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import type { AssemblyGuide, Part, Step } from "@/lib/schema";
 import { getLocalGuide, triggerDownload } from "@/lib/localGuides";
 import StepCanvas, { type StepCanvasHandle } from "./StepCanvas";
@@ -62,6 +63,8 @@ export default function GuideViewer({ id }: { id: string }) {
   const [source, setSource] = useState<{ blob: Blob; name: string } | null>(null);
   const canvasRef = useRef<StepCanvasHandle>(null);
   const [sharing, setSharing] = useState(false);
+  /** 按下「全部完成」後顯示的完成畫面 */
+  const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -157,6 +160,10 @@ export default function GuideViewer({ id }: { id: string }) {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && /^(input|textarea|select)$/i.test(target.tagName)) return;
+      if (completed) {
+        if (e.key === "Escape") setCompleted(false);
+        return;
+      }
       if (originalOpen) {
         if (e.key === "Escape") setOriginalOpen(false);
         if (e.key === "ArrowLeft") setOriginalPage((p) => Math.max(1, p - 1));
@@ -172,7 +179,7 @@ export default function GuideViewer({ id }: { id: string }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [guide, originalOpen]);
+  }, [guide, originalOpen, completed]);
 
   if (error) return <div className="loading-page">{error}</div>;
   if (!guide) return <div className="loading-page">載入指南中…</div>;
@@ -329,7 +336,10 @@ export default function GuideViewer({ id }: { id: string }) {
             ) : (
               <button
                 className="btn btn-primary"
-                onClick={() => setDone((prev) => new Set(prev).add(step.id))}
+                onClick={() => {
+                  setDone((prev) => new Set(prev).add(step.id));
+                  setCompleted(true);
+                }}
               >
                 全部完成 <IconCheck size={16} />
               </button>
@@ -413,6 +423,34 @@ export default function GuideViewer({ id }: { id: string }) {
           )}
         </div>
       </div>
+
+      {/* 組裝完成畫面 */}
+      {completed && (
+        <div className="modal-backdrop" onClick={() => setCompleted(false)}>
+          <div className="modal complete-card" onClick={(e) => e.stopPropagation()}>
+            <span className="complete-icon">
+              <IconCheck size={32} />
+            </span>
+            <h3>組裝完成！</h3>
+            <p>
+              {guide.product.name} 的 {steps.length} 個步驟已全部完成，辛苦了。
+            </p>
+            {guide.warnings.some((w) => w.severity === "danger") && (
+              <p className="complete-warn">
+                <IconWarningTriangle size={15} /> 最後提醒：依說明書將家具固定於牆面，避免傾倒。
+              </p>
+            )}
+            <div className="complete-actions">
+              <Link className="btn btn-primary" href="/">
+                回首頁
+              </Link>
+              <button className="btn btn-secondary" onClick={() => setCompleted(false)}>
+                繼續檢視指南
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 原始說明書模態框 */}
       {originalOpen && (

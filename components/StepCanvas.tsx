@@ -243,9 +243,10 @@ const StepCanvas = forwardRef<StepCanvasHandle, Props>(function StepCanvas(
   );
 
   if (!aspect) {
+    // 與載入後同一個固定高度容器，切換步驟時版面不跳動
     return (
-      <div className="canvas-stage" style={{ minHeight: 320, alignItems: "center" }}>
-        <span style={{ color: "var(--ink-soft)", fontSize: 14 }}>載入頁面中…</span>
+      <div className="canvas-stage">
+        <span style={{ color: "var(--text-3)", fontSize: 14 }}>載入頁面中…</span>
       </div>
     );
   }
