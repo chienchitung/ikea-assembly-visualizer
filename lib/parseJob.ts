@@ -1,7 +1,9 @@
 import { GEMINI_KEY_STORAGE } from "@/components/ApiKeySettings";
 import { pdfToPageBlobs } from "./pdfToImages";
 import { MAX_INLINE_BYTES, parseManualWithGemini } from "./geminiParse";
+import { CHUNK_THRESHOLD_PAGES } from "./prompt";
 import { saveLocalGuide } from "./localGuides";
+import { blobToBase64 } from "./base64";
 
 /**
  * 解析工作管理器（模組層級單例）。
@@ -19,6 +21,8 @@ export type ParsePhase = "reading" | "rendering" | "parsing" | "saving";
 export interface ParseJobState {
   status: "idle" | "running" | "done" | "error";
   phase: ParsePhase | null;
+  /** 分批解析進度提示（如「步驟批次 2/4」），僅大型說明書分批解析時有值 */
+  detail: string | null;
   fileName: string | null;
   /** status=done 時的新指南 id */
   guideId: string | null;
@@ -35,6 +39,7 @@ const PHASE_LABEL: Record<ParsePhase, string> = {
 let state: ParseJobState = {
   status: "idle",
   phase: null,
+  detail: null,
   fileName: null,
   guideId: null,
   error: null,
@@ -76,21 +81,11 @@ export function subscribeParseJob(fn: (s: ParseJobState) => void): () => void {
 /** 前端處理完 done / error 後呼叫，把狀態歸零。 */
 export function acknowledgeParseJob() {
   if (state.status === "done" || state.status === "error") {
-    setState({ status: "idle", phase: null, fileName: null, guideId: null, error: null });
+    setState({ status: "idle", phase: null, detail: null, fileName: null, guideId: null, error: null });
   }
 }
 
 const ACCEPTED = ["application/pdf", "image/jpeg", "image/png"];
-
-async function blobToBase64(blob: Blob): Promise<string> {
-  const bytes = new Uint8Array(await blob.arrayBuffer());
-  let binary = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunk) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-  }
-  return btoa(binary);
-}
 
 /** 啟動解析。已有工作進行中時忽略（一次一件）。 */
 export function startParseJob(file: File): void {
@@ -119,7 +114,7 @@ export function startParseJob(file: File): void {
     return;
   }
 
-  setState({ status: "running", phase: "reading", fileName: file.name, guideId: null, error: null });
+  setState({ status: "running", phase: "reading", detail: null, fileName: file.name, guideId: null, error: null });
   window.addEventListener("beforeunload", beforeUnload);
 
   void (async () => {
@@ -132,13 +127,23 @@ export function startParseJob(file: File): void {
       setState({ phase: "rendering" });
       const pages: Blob[] = isPdf ? await pdfToPageBlobs(bytes) : [file];
 
-      setState({ phase: "parsing" });
+      // 頁數超過分批門檻時才需要逐頁 base64——分批解析每批只送特定頁碼範圍給
+      // 模型（見 lib/geminiParse.ts § 分批解析），頁數較少維持單次呼叫不需要。
+      const needsPageImages = isPdf && pages.length > CHUNK_THRESHOLD_PAGES;
+      const pageImages = needsPageImages
+        ? await Promise.all(
+            pages.map(async (b) => ({ base64: await blobToBase64(b), mimeType: "image/jpeg" }))
+          )
+        : undefined;
+
+      setState({ phase: "parsing", detail: null });
       const guide = await parseManualWithGemini({
         apiKey,
         fileType: isPdf ? "pdf" : "image",
         pdfBase64: isPdf ? fileBase64 : undefined,
-        images: isPdf ? undefined : [{ base64: fileBase64, mimeType: file.type }],
+        images: isPdf ? pageImages : [{ base64: fileBase64, mimeType: file.type }],
         pageCount: pages.length,
+        onBatchProgress: (done, total) => setState({ detail: `步驟批次 ${done}/${total}` }),
       });
 
       setState({ phase: "saving" });

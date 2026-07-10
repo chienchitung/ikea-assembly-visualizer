@@ -198,6 +198,20 @@ export const AssemblyGuide = z.object({
 });
 export type AssemblyGuide = z.infer<typeof AssemblyGuide>;
 
+// ---------- 分批解析用子集合 ----------
+//
+// 頁數多的說明書(見 lib/geminiParse.ts 的分批解析)拆成兩階段呼叫模型:
+// 1. GuideFrontMatter:整份文件一次呼叫,只要求產品/零件/工具/警示 ——
+//    不含 steps,輸出量不隨步驟數膨脹,大文件也不會被截斷。
+// 2. StepsBatch:依頁碼範圍分批呼叫,只要求該範圍內的 steps。
+// 最後把每批 steps 依序合併,拼回一份完整 AssemblyGuide 並整體驗證一次。
+
+export const GuideFrontMatter = AssemblyGuide.omit({ steps: true });
+export type GuideFrontMatter = z.infer<typeof GuideFrontMatter>;
+
+export const StepsBatch = z.object({ steps: z.array(Step) });
+export type StepsBatch = z.infer<typeof StepsBatch>;
+
 // ---------- 解析工作狀態 ----------
 
 export type GuideJobStatus = "uploaded" | "rendering" | "parsing" | "ready" | "error";
