@@ -8,13 +8,11 @@
 
 ## 操作示範
 
-<video src="docs/demo.mp4" controls muted playsinline width="720">
-  你的瀏覽器不支援內嵌影片播放，請直接下載：
-  <a href="docs/demo.mp4">docs/demo.mp4</a>
-</video>
+![操作示範：開啟 KALLAX 示範指南、縮放畫布、逐步切換、查看零件與原始說明書](docs/demo.gif)
 
 以內建的 KALLAX 示範指南錄製：開啟示範 → 放大/縮小細節與顯示整頁 → 逐步
 切換步驟 → 查看零件與工具、注意事項分頁 → 對照原始說明書頁面 → 完成畫面。
+（[完整畫質 MP4](docs/demo.mp4)）
 
 ## 快速開始
 
