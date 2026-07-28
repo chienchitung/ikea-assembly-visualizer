@@ -64,6 +64,7 @@ export default function Uploader() {
             </span>
           ))}
         </div>
+        {job.detail && <p className="pipeline-detail">{job.detail}</p>}
       </div>
     );
   }

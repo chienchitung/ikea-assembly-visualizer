@@ -6,6 +6,14 @@
 內建已解析完成的 **KALLAX 層架組（4×3）** 示範資料：不需要 API 金鑰即可在
 `/guide/kallax` 體驗完整功能（16 步驟、11 種零件、64 支木榫的完整流程）。
 
+## 操作示範
+
+![操作示範：開啟 KALLAX 示範指南、縮放畫布、逐步切換、查看零件與原始說明書](docs/demo.gif)
+
+以內建的 KALLAX 示範指南錄製：開啟示範 → 放大/縮小細節與顯示整頁 → 逐步
+切換步驟 → 查看零件與工具、注意事項分頁 → 對照原始說明書頁面 → 完成畫面。
+（[完整畫質 MP4](docs/demo.mp4)）
+
 ## 快速開始
 
 ```bash
@@ -28,12 +36,41 @@ npm run dev          # http://localhost:3000 → 點「開啟示範」
 1. 讀取檔案（FileReader，不上傳到本站伺服器）
 2. pdfjs-dist 在瀏覽器內把 PDF 轉成逐頁 JPEG（指南底圖）
 3. 瀏覽器直接呼叫 Gemini API（gemini-3.6-flash）：
-     · PDF 以 inline_data 整份送入（原生 PDF 視覺理解，保留頁碼）
-     · 圖片以 inline_data 送入
+     · 頁數 <= CHUNK_THRESHOLD_PAGES（26）：單次呼叫，PDF 以 inline_data 整份
+       送入（原生 PDF 視覺理解，保留頁碼）；圖片以 inline_data 送入
+     · 頁數較多：分批解析（見下方「分批解析」）
      · responseJsonSchema 結構化輸出（schema 由 zod 產生）
-     · zod 再驗證一次
+     · zod 再驗證一次，格式不完整時先嘗試自動修復（lib/guideRepair.ts）再驗一次
 4. 指南 JSON + 頁面圖存入 IndexedDB → 導向 /guide/<id> 檢視器
 ```
+
+**解析工作是模組層級的背景工作，不綁在任何 React 元件或分頁焦點上**
+（`lib/parseJob.ts`）：切到其他瀏覽器分頁、或在站內切換頁面，實際發出的
+`fetch()` 呼叫都不會被中斷，解析照常在背景跑完；回到首頁時元件重新訂閱
+目前狀態，完成後自動導向指南。分頁標題會即時顯示目前階段（如
+「⏳ AI 解析說明書…」），並在解析期間攔截關閉/重新整理提醒使用者解析
+會中斷（真正會中斷解析的只有「關閉分頁」，不是「切到別的分頁」）。
+
+### 分批解析（大份說明書）
+
+單次呼叫模型的輸出 token 是有上限的；頁數與步驟數愈多，逐步視覺化標註
+累加起來的 JSON 就愈長。模型為了在上限內產出「語法合法」的 JSON，可能會
+自行大幅減少步驟數，而不是輸出到一半被截斷報錯——這正是大份說明書
+「只解析出兩三個步驟」的成因，而非檔案位元組大小或頁數本身的限制。
+
+頁數超過 `CHUNK_THRESHOLD_PAGES`（`lib/prompt.ts`，預設 26 頁）的說明書會
+自動改走兩階段分批解析（`lib/geminiParse.ts`）：
+
+1. **前段資料**：整份文件一次呼叫，只要求 `product` / `parts` / `tools` /
+   `warnings` / `generalTips`（schema 結構上排除 `steps`），輸出量不隨步驟
+   數膨脹。
+2. **步驟**：依頁碼切成每批 `STEPS_BATCH_SIZE`（預設 16）頁，**依序**（非
+   平行）呼叫——避免同時多個請求超出使用者個人 Gemini 金鑰的每分鐘配額，
+   每批只要求落在該頁碼範圍內的步驟，並把第 1 步已解析出的零件/工具清單
+   當作已知內容傳入，讓各批引用一致的 id。解析畫面會顯示目前批次進度
+   （如「步驟批次 2/4」）。
+3. 合併所有批次的 steps、依步驟編號排序，拼回一份完整指南並整體以 zod
+   驗證一次。
 
 這個設計的取捨：
 
@@ -47,9 +84,12 @@ npm run dev          # http://localhost:3000 → 點「開啟示範」
 |---|---|
 | `lib/schema.ts` | 指南資料格式（zod，單一事實來源） |
 | `schema/assembly-guide.schema.json` | 同格式的 JSON Schema 文件（對外交付格式） |
-| `lib/prompt.ts` | 解析提示詞 |
-| `lib/geminiParse.ts` | 瀏覽器端 Gemini 解析引擎（structured outputs + zod 驗證） |
+| `lib/prompt.ts` | 解析提示詞 + 分批解析的提示詞建構與頁碼切批邏輯 |
+| `lib/geminiParse.ts` | 瀏覽器端 Gemini 解析引擎（structured outputs + 分批解析 + zod 驗證） |
+| `lib/guideRepair.ts` | 結構化輸出格式不完整時的自動修復（單次解析/前段資料/步驟批次共用） |
+| `lib/parseJob.ts` | 模組層級解析工作管理器（不綁元件生命週期，背景解析） |
 | `lib/pdfToImages.ts` | 瀏覽器端 PDF → 頁面 JPEG（pdfjs-dist） |
+| `lib/base64.ts` | Blob → base64 共用小工具 |
 | `lib/localGuides.ts` | 瀏覽器本機指南儲存（IndexedDB） |
 | `lib/store.ts` | 伺服器端示範指南讀取（僅供 kallax 等內建示範） |
 | `lib/demoGuides.ts` | 示範指南註冊表（建置時靜態 import，不依賴執行期讀檔） |
@@ -131,6 +171,9 @@ npm run dev          # http://localhost:3000 → 點「開啟示範」
 - 解析結果保存在瀏覽器 IndexedDB，只在解析它的裝置/瀏覽器上可見；
   清除瀏覽資料會一併清除指南。
 - Gemini 單一請求上限約 20MB（base64 後），原始檔限制約 14MB；
-  更大的說明書請先壓縮或拆分。
-- 解析需 1–3 分鐘，期間需保持頁面開啟（解析在瀏覽器內進行）。
+  更大的說明書請先壓縮或拆分（分批解析的前段資料階段仍需送整份 PDF，
+  不受此限制放寬）。
+- 解析需 1–3 分鐘（頁數多、走分批解析的說明書會更久，因為步驟批次是依序
+  而非平行呼叫），期間需保持分頁不被關閉（切到別的分頁沒問題，解析在
+  背景繼續；關閉分頁才會中斷）。
 - 標註座標由模型估計，偶有偏移；檢視器提供「顯示整頁 / 查看原始說明書」作為對照。
