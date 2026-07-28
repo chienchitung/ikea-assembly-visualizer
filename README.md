@@ -27,7 +27,7 @@ npm run dev          # http://localhost:3000 → 點「開啟示範」
    ▼
 1. 讀取檔案（FileReader，不上傳到本站伺服器）
 2. pdfjs-dist 在瀏覽器內把 PDF 轉成逐頁 JPEG（指南底圖）
-3. 瀏覽器直接呼叫 Gemini API（gemini-3.5-flash）：
+3. 瀏覽器直接呼叫 Gemini API（gemini-3.6-flash）：
      · PDF 以 inline_data 整份送入（原生 PDF 視覺理解，保留頁碼）
      · 圖片以 inline_data 送入
      · responseJsonSchema 結構化輸出（schema 由 zod 產生）
@@ -61,8 +61,8 @@ npm run dev          # http://localhost:3000 → 點「開啟示範」
 
 ### 解析模型
 
-固定使用 `gemini-3.5-flash`（最新一代 Flash 正式版，原生支援 PDF 文件
-視覺理解與 JSON 結構化輸出），不提供切換。實作使用 Gemini REST API 的
+固定使用 `gemini-3.6-flash`（最新一代 Flash 正式版，1M context，原生
+支援 PDF 文件視覺理解與 JSON 結構化輸出），不提供切換。實作使用 Gemini REST API 的
 `responseJsonSchema` 結構化輸出，schema 由 zod（`lib/schema.ts`）以
 `z.toJSONSchema()` 產生，最後一律再以 zod 驗證。
 
