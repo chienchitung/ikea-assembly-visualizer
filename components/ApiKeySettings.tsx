@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { IconKey } from "./icons";
 
 /**
- * 右上角的 Gemini API 金鑰設定。解析模型固定使用 Gemini 3.5 Flash，
+ * 右上角的 Gemini API 金鑰設定。解析模型固定使用 Gemini 3.6 Flash，
  * 不提供切換。
  *
  * 隱私設計：金鑰只存在使用者瀏覽器的 localStorage，永遠不會寫入伺服器的
@@ -100,7 +100,7 @@ export default function ApiKeySettings() {
           </div>
 
           <p className="apikey-note">
-            解析模型固定使用 Gemini 3.5
+            解析模型固定使用 Gemini 3.6
             Flash。金鑰僅儲存在此瀏覽器（localStorage），伺服器不保存；解析時才隨該次請求送出使用。可到{" "}
             <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">
               Google AI Studio

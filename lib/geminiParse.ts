@@ -22,8 +22,8 @@ import { repairGuide, repairFrontMatter, repairStepsBatch } from "./guideRepair"
  *   單一請求上限 20MB（base64 後），因此原始檔限制在約 14MB。
  * - 結構化輸出：responseMimeType=application/json + responseJsonSchema
  *   （標準 JSON Schema，由 zod 的 z.toJSONSchema 產生），最後仍以 zod 驗證把關。
- * - 模型固定使用 gemini-3.5-flash（最新一代 Flash 正式版，原生支援 PDF 視覺
- *   與結構化輸出）。
+ * - 模型固定使用 gemini-3.6-flash（最新一代 Flash 正式版，1M context，
+ *   原生支援 PDF 視覺與結構化輸出）。
  *
  * 頁數超過 CHUNK_THRESHOLD_PAGES（見 lib/prompt.ts）的說明書改走「分批解析」：
  * 單次呼叫模型的輸出 token 有上限，頁數與步驟數愈多、逐步視覺化標註累加起來
@@ -34,7 +34,7 @@ import { repairGuide, repairFrontMatter, repairStepsBatch } from "./guideRepair"
  * steps，最後合併驗證。
  */
 
-const MODEL = "gemini-3.5-flash";
+const MODEL = "gemini-3.6-flash";
 
 /** Gemini 單一請求上限 20MB（base64 後），原始檔約 14MB */
 export const MAX_INLINE_BYTES = 14 * 1024 * 1024;
